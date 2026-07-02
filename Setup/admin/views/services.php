@@ -22,7 +22,7 @@ declare(strict_types=1);
                     <button class="admin-sidebar-link <?php echo $i === 0 ? 'active' : ''; ?>" 
                             data-target="service-card-<?php echo htmlspecialchars($s['id']); ?>"
                             style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">
-                        ⚡ <?php echo htmlspecialchars($s['name']); ?>
+                        <svg style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 6px; color: var(--color-cyan-pulse);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg><span class="service-label-text"><?php echo htmlspecialchars($s['name']); ?></span>
                     </button>
                 <?php endforeach; ?>
             </div>
@@ -120,9 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     successAlert.style.display = 'block';
                     
                     // Update navigation list button text dynamically
-                    const navBtn = document.querySelector(`#services-nav button[data-target="service-card-${id}"]`);
-                    if (navBtn) {
-                        navBtn.textContent = `⚡ ${form.querySelector('input[name="name"]').value}`;
+                    const navLabel = document.querySelector(`#services-nav button[data-target="service-card-${id}"] .service-label-text`);
+                    if (navLabel) {
+                        navLabel.textContent = form.querySelector('input[name="name"]').value;
                     }
                 } else {
                     throw new Error(data.message || 'Saving updates failed.');

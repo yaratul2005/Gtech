@@ -37,7 +37,8 @@ function isActive(string $path, string $currentUri): string
     <link rel="canonical" href="<?php echo htmlspecialchars(getenv('APP_URL') ?: 'https://greatentech.com') . htmlspecialchars($currentUri); ?>">
     
     <!-- Favicon -->
-    <link rel="shortcut icon" href="/Front/static/img/favicon.png" type="image/png">
+    <link rel="icon" type="image/png" href="/Front/static/img/favicon.png?v=2">
+    <link rel="shortcut icon" type="image/png" href="/Front/static/img/favicon.png?v=2">
     
     <!-- Fonts Integration (Resource.md: Outfit & Inter self-hosted/Google Fonts fast-swap) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

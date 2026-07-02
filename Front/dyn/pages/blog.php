@@ -31,7 +31,9 @@ if (file_exists($postsFile)) {
                 <?php foreach (array_reverse($posts) as $index => $post): ?>
                     <div class="card" data-reveal data-delay="<?php echo ($index % 3) * 100; ?>" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
                         <div style="height: 180px; background: linear-gradient(135deg, var(--color-blue-deep) 0%, var(--color-void) 100%); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; color: var(--color-cyan-pulse);">
-                            <span style="font-size: 3.5rem;">📰</span>
+                            <svg style="width: 48px; height: 48px; color: var(--color-cyan-pulse);" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18V6.125C3 5.504 3.504 5 4.125 5H8.25v2.25A2.25 2.25 0 0010.5 9.5H12v-2z"/>
+                            </svg>
                         </div>
                         <div style="padding: 25px; display: flex; flex-direction: column; flex-grow: 1;">
                             <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-cyan-pulse); font-weight: 700; letter-spacing: 0.08em; margin-bottom: 8px;">
