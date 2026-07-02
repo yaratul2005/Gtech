@@ -30,10 +30,10 @@ if (file_exists($teamFile)) {
             <?php else: ?>
                 <?php foreach ($team as $index => $m): ?>
                     <div class="team-card-wrapper" style="perspective: 1000px;" data-reveal data-delay="<?php echo ($index % 3) * 150; ?>">
-                        <div class="card team-3d-card" style="padding: 0; overflow: hidden; transform-style: preserve-3d; transition: transform 0.15s ease, box-shadow 0.3s ease; background: rgba(255, 255, 255, 0.015); border: 1px solid var(--glass-border); border-radius: 20px;">
+                        <div class="card team-3d-card" style="padding: 0; overflow: hidden; transform-style: preserve-3d; transition: transform 0.15s ease, box-shadow 0.3s ease; background: <?php echo htmlspecialchars($m['theme'] ?? 'rgba(255, 255, 255, 0.015)'); ?>; border: 1px solid var(--glass-border); border-radius: 20px;">
                             
                             <!-- Profile Image with Overlay Role Highlight -->
-                            <div style="position: relative; height: 260px; overflow: hidden; background: linear-gradient(135deg, var(--color-blue-deep) 0%, var(--color-void) 100%); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--glass-border); transform-style: preserve-3d;">
+                            <div style="position: relative; height: 260px; overflow: hidden; background: <?php echo htmlspecialchars($m['theme'] ?? 'linear-gradient(135deg, var(--color-blue-deep) 0%, var(--color-void) 100%)'); ?>; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--glass-border); transform-style: preserve-3d;">
                                 <div style="position: absolute; inset: 0; background-image: url('<?php echo htmlspecialchars($m['image']); ?>'); background-size: cover; background-position: center; filter: brightness(0.85); transition: transform 0.5s ease;" class="team-profile-pic"></div>
                                 
                                 <!-- Highlighted Role Badge (3D popout) -->

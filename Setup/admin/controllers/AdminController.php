@@ -755,6 +755,7 @@ class AdminController
         $bio = trim($_POST['bio'] ?? '');
         $skills = trim($_POST['skills'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
+        $theme = trim($_POST['theme'] ?? 'linear-gradient(135deg, #090d16 0%, #0a2540 100%)');
 
         if (empty($name) || empty($role) || empty($bio)) {
             http_response_code(400);
@@ -796,7 +797,8 @@ class AdminController
             'bio' => $bio,
             'skills' => $skills,
             'image' => $imagePath,
-            'phone' => $phone
+            'phone' => $phone,
+            'theme' => $theme
         ];
 
         $team[] = $newItem;

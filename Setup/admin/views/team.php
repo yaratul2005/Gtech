@@ -48,6 +48,12 @@ declare(strict_types=1);
                 </div>
 
                 <div class="form-group">
+                    <label class="form-label">Card Theme (CSS Gradient)</label>
+                    <input type="text" name="theme" class="form-input" value="linear-gradient(135deg, #091a2f 0%, #030508 100%)" required>
+                    <p style="font-size: 0.7rem; color: var(--color-mist); margin-top: 4px;">Custom CSS gradient for this person's 3D card background.</p>
+                </div>
+
+                <div class="form-group">
                     <label class="form-label">Upload Profile Photo</label>
                     <input type="file" name="image" class="form-input" accept="image/*" style="border: 1px dashed var(--glass-border); padding: 12px; cursor: pointer;">
                     <p style="font-size: 0.7rem; color: var(--color-mist); margin-top: 4px;">Allowed formats: WebP, PNG, JPG, GIF.</p>
@@ -98,6 +104,12 @@ declare(strict_types=1);
                                         <?php if (!empty($m['phone'])): ?>
                                             <span style="font-size: 0.7rem; color: #4ade80; display: inline-flex; align-items: center; gap: 4px;">
                                                 WhatsApp: <?php echo htmlspecialchars($m['phone']); ?>
+                                            </span>
+                                        <?php endif; ?>
+                                        <?php if (!empty($m['theme'])): ?>
+                                            <span style="font-size: 0.7rem; color: var(--color-cyan-pulse); display: inline-flex; align-items: center; gap: 4px;">
+                                                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: <?php echo htmlspecialchars($m['theme']); ?>; border: 1px solid rgba(255,255,255,0.2);"></span>
+                                                Theme Gradient
                                             </span>
                                         <?php endif; ?>
                                     </div>

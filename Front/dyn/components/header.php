@@ -91,6 +91,99 @@ function isActive(string $path, string $currentUri): string
     <?php echo getenv('HEADER_CODE') !== false ? getenv('HEADER_CODE') : ''; ?>
 </head>
 <body>
+    <!-- Fluid Page Transition Loader -->
+    <div id="fluid-wipe-overlay" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(135deg, #091a2f 0%, #030508 100%);
+        z-index: 999999;
+        transform: translateY(0);
+        transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+        pointer-events: all;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    ">
+        <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+            <div class="fluid-glow" style="
+                width: 70px;
+                height: 70px;
+                border-radius: 50%;
+                background: #00f2fe;
+                box-shadow: 0 0 35px #00f2fe, 0 0 70px #4facfe;
+                animation: fluidRotate 2.2s infinite alternate ease-in-out;
+                filter: blur(1px);
+            "></div>
+            <div style="font-family: 'Outfit', sans-serif; font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; color: #00f2fe; font-weight: 700; opacity: 0.8; text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);">
+                Loading...
+            </div>
+        </div>
+    </div>
+
+    <style>
+    @keyframes fluidRotate {
+        0% { transform: scale(1) rotate(0deg); border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+        33% { transform: scale(1.1) rotate(120deg); border-radius: 40% 60% 45% 55% / 40% 45% 55% 60%; }
+        66% { transform: scale(0.9) rotate(240deg); border-radius: 55% 45% 60% 40% / 50% 60% 40% 50%; }
+        100% { transform: scale(1) rotate(360deg); border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+    }
+    </style>
+
+    <script>
+    (function() {
+        const hideLoader = () => {
+            const overlay = document.getElementById('fluid-wipe-overlay');
+            if (overlay) {
+                overlay.style.transform = 'translateY(100%)';
+                overlay.style.pointerEvents = 'none';
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(hideLoader, 150);
+
+            document.body.addEventListener('click', e => {
+                const link = e.target.closest('a');
+                if (link && link.href) {
+                    const url = new URL(link.href, window.location.href);
+                    const isInternal = url.origin === window.location.origin;
+                    const isSpecial = link.getAttribute('target') === '_blank' || 
+                                      link.getAttribute('href').startsWith('#') || 
+                                      link.getAttribute('href').startsWith('javascript:') ||
+                                      e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;
+                    
+                    if (isInternal && !isSpecial) {
+                        e.preventDefault();
+                        const overlay = document.getElementById('fluid-wipe-overlay');
+                        if (overlay) {
+                            overlay.style.transition = 'none';
+                            overlay.style.transform = 'translateY(-100%)';
+                            overlay.offsetHeight;
+                            overlay.style.transition = 'transform 0.6s cubic-bezier(0.85, 0, 0.15, 1)';
+                            overlay.style.transform = 'translateY(0)';
+                            overlay.style.pointerEvents = 'all';
+                            setTimeout(() => {
+                                window.location.href = link.href;
+                            }, 550);
+                        } else {
+                            window.location.href = link.href;
+                        }
+                    }
+                }
+            });
+        });
+
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                hideLoader();
+            }
+        });
+    })();
+    </script>
+
     <!-- Premium Navigation Bar -->
     <nav class="navbar" id="navbar">
         <div class="container nav-container">

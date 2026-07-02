@@ -6,7 +6,8 @@
     "bio": "Specializes in full-stack engineering, AI integrations, and high-performance server architectures. Driving innovation and delivering end-to-end digital solutions.",
     "skills": "PHP, Node.js, Python, DevOps, AI Integrations",
     "image": "/Front/static/img/logo.png",
-    "phone": "+8801726383838"
+    "phone": "+8801726383838",
+    "theme": "linear-gradient(135deg, #091a2f 0%, #030508 100%)"
   },
   {
     "id": "2",
@@ -15,6 +16,7 @@
     "bio": "Crafting premium user interfaces and interactive customer journeys. Turning product requirements into visual designs that inspire and engage users.",
     "skills": "Figma, Webflow, UI Design, Brand Identity",
     "image": "/Front/static/img/logo.png",
-    "phone": "+15550199"
+    "phone": "+15550199",
+    "theme": "linear-gradient(135deg, #1b0a24 0%, #050207 100%)"
   }
 ]
