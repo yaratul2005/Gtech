@@ -48,13 +48,38 @@ class Router
 
         $callback = $this->routes[$method][$uri] ?? null;
 
+        // Dynamic wildcards fallback (/p/* and /blog/*)
+        if ($callback === null) {
+            if (strpos($uri, '/p/') === 0) {
+                $slug = substr($uri, 3);
+                $callback = $this->routes[$method]['/p/*'] ?? null;
+                if ($callback !== null) {
+                    $this->executeCallback($callback, [$slug]);
+                    return;
+                }
+            }
+            if (strpos($uri, '/blog/') === 0 && $uri !== '/blog') {
+                $slug = substr($uri, 6);
+                $callback = $this->routes[$method]['/blog/*'] ?? null;
+                if ($callback !== null) {
+                    $this->executeCallback($callback, [$slug]);
+                    return;
+                }
+            }
+        }
+
         if ($callback === null) {
             $this->abort404();
             return;
         }
 
+        $this->executeCallback($callback);
+    }
+
+    private function executeCallback($callback, array $params = []): void
+    {
         if (is_callable($callback)) {
-            echo call_user_func($callback);
+            echo call_user_func_array($callback, $params);
             return;
         }
 
@@ -63,7 +88,7 @@ class Router
             $action = $callback[1];
 
             $controller = new $controllerName();
-            $controller->$action();
+            call_user_func_array([$controller, $action], $params);
             return;
         }
     }

@@ -16,6 +16,8 @@ class AdminController
     private string $servicesFile;
     private string $portfolioFile;
     private string $settingsFile;
+    private string $pagesFile;
+    private string $postsFile;
 
     public function __construct()
     {
@@ -23,6 +25,8 @@ class AdminController
         $this->servicesFile = __DIR__ . '/../../../Vault/content/services.json';
         $this->portfolioFile = __DIR__ . '/../../../Vault/content/portfolio.json';
         $this->settingsFile = __DIR__ . '/../../../Vault/content/settings.json';
+        $this->pagesFile = __DIR__ . '/../../../Vault/content/pages.json';
+        $this->postsFile = __DIR__ . '/../../../Vault/content/posts.json';
     }
 
     public function showLoginForm(): void
@@ -224,7 +228,9 @@ class AdminController
             'smtp_user' => trim($_POST['smtp_user'] ?? ''),
             'smtp_pass' => trim($_POST['smtp_pass'] ?? ''),
             'smtp_from' => trim($_POST['smtp_from'] ?? 'contact@greatentech.com'),
-            'smtp_from_name' => trim($_POST['smtp_from_name'] ?? 'Great Endured Technology')
+            'smtp_from_name' => trim($_POST['smtp_from_name'] ?? 'Great Endured Technology'),
+            'header_code' => $_POST['header_code'] ?? '',
+            'footer_code' => $_POST['footer_code'] ?? ''
         ];
 
         file_put_contents($this->settingsFile, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
@@ -399,6 +405,258 @@ class AdminController
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Migration execution failed: ' . $e->getMessage()]);
         }
+    }
+
+    public function pages(): void
+    {
+        $pages = [];
+        if (file_exists($this->pagesFile)) {
+            $pages = json_decode((string)file_get_contents($this->pagesFile), true) ?: [];
+        }
+        $this->renderView('pages', [
+            'title' => 'Page CMS Manager',
+            'pages' => $pages
+        ]);
+    }
+
+    public function createPage(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $title = trim($_POST['title'] ?? '');
+        $slug = trim($_POST['slug'] ?? '');
+        $meta_desc = trim($_POST['meta_desc'] ?? '');
+        $content = trim($_POST['content'] ?? '');
+
+        if (empty($title) || empty($slug) || empty($content)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Title, Slug, and Content are required fields.']);
+            return;
+        }
+
+        // Clean slug: lowercase, replace non-alphanumeric with hyphen
+        $slug = strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $slug));
+
+        $pages = [];
+        if (file_exists($this->pagesFile)) {
+            $pages = json_decode((string)file_get_contents($this->pagesFile), true) ?: [];
+        }
+
+        // Check if slug exists
+        foreach ($pages as $p) {
+            if ($p['slug'] === $slug) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'A page with this URL slug already exists.']);
+                return;
+            }
+        }
+
+        $newPage = [
+            'slug' => $slug,
+            'title' => $title,
+            'meta_desc' => $meta_desc,
+            'content' => $content,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        $pages[] = $newPage;
+
+        file_put_contents($this->pagesFile, json_encode($pages, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        echo json_encode(['success' => true, 'message' => 'Page created successfully!']);
+    }
+
+    public function deletePage(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $slug = trim($_POST['slug'] ?? '');
+        if (empty($slug)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Page Slug is required.']);
+            return;
+        }
+
+        $pages = [];
+        if (file_exists($this->pagesFile)) {
+            $pages = json_decode((string)file_get_contents($this->pagesFile), true) ?: [];
+        }
+
+        $updated = array_filter($pages, fn($p) => $p['slug'] !== $slug);
+        if (count($pages) === count($updated)) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Page not found.']);
+            return;
+        }
+
+        $updated = array_values($updated);
+        file_put_contents($this->pagesFile, json_encode($updated, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        echo json_encode(['success' => true, 'message' => 'Page deleted successfully.']);
+    }
+
+    public function posts(): void
+    {
+        $posts = [];
+        if (file_exists($this->postsFile)) {
+            $posts = json_decode((string)file_get_contents($this->postsFile), true) ?: [];
+        }
+        $this->renderView('posts', [
+            'title' => 'Blog CMS Manager',
+            'posts' => $posts
+        ]);
+    }
+
+    public function createPost(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $title = trim($_POST['title'] ?? '');
+        $slug = trim($_POST['slug'] ?? '');
+        $meta_desc = trim($_POST['meta_desc'] ?? '');
+        $content = trim($_POST['content'] ?? '');
+
+        if (empty($title) || empty($slug) || empty($content)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Title, Slug, and Content are required fields.']);
+            return;
+        }
+
+        $slug = strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $slug));
+
+        $posts = [];
+        if (file_exists($this->postsFile)) {
+            $posts = json_decode((string)file_get_contents($this->postsFile), true) ?: [];
+        }
+
+        foreach ($posts as $p) {
+            if ($p['slug'] === $slug) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'A blog post with this URL slug already exists.']);
+                return;
+            }
+        }
+
+        $newPost = [
+            'slug' => $slug,
+            'title' => $title,
+            'meta_desc' => $meta_desc,
+            'content' => $content,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        $posts[] = $newPost;
+
+        file_put_contents($this->postsFile, json_encode($posts, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        echo json_encode(['success' => true, 'message' => 'Blog post published successfully!']);
+    }
+
+    public function deletePost(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $slug = trim($_POST['slug'] ?? '');
+        if (empty($slug)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Post Slug is required.']);
+            return;
+        }
+
+        $posts = [];
+        if (file_exists($this->postsFile)) {
+            $posts = json_decode((string)file_get_contents($this->postsFile), true) ?: [];
+        }
+
+        $updated = array_filter($posts, fn($p) => $p['slug'] !== $slug);
+        if (count($posts) === count($updated)) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Blog post not found.']);
+            return;
+        }
+
+        $updated = array_values($updated);
+        file_put_contents($this->postsFile, json_encode($updated, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        echo json_encode(['success' => true, 'message' => 'Blog post deleted successfully.']);
+    }
+
+    public function showBlogPost(string $slug): void
+    {
+        $posts = [];
+        if (file_exists($this->postsFile)) {
+            $posts = json_decode((string)file_get_contents($this->postsFile), true) ?: [];
+        }
+
+        $post = null;
+        foreach ($posts as $p) {
+            if ($p['slug'] === $slug) {
+                $post = $p;
+                break;
+            }
+        }
+
+        if ($post === null) {
+            http_response_code(404);
+            echo view('404', ['title' => 'Post Not Found']);
+            return;
+        }
+
+        echo view('blog_post', [
+            'title' => $post['title'],
+            'post' => $post
+        ]);
+    }
+
+    public function showDynamicPage(string $slug): void
+    {
+        $pages = [];
+        if (file_exists($this->pagesFile)) {
+            $pages = json_decode((string)file_get_contents($this->pagesFile), true) ?: [];
+        }
+
+        $page = null;
+        foreach ($pages as $p) {
+            if ($p['slug'] === $slug) {
+                $page = $p;
+                break;
+            }
+        }
+
+        if ($page === null) {
+            http_response_code(404);
+            echo view('404', ['title' => 'Page Not Found']);
+            return;
+        }
+
+        echo view('dynamic_page', [
+            'title' => $page['title'],
+            'page' => $page
+        ]);
     }
 
     // -------------------------------------------------------------

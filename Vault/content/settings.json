@@ -8,5 +8,7 @@
   "smtp_user": "",
   "smtp_pass": "",
   "smtp_from": "contact@greatentech.com",
-  "smtp_from_name": "Great Endured Technology"
+  "smtp_from_name": "Great Endured Technology",
+  "header_code": "",
+  "footer_code": ""
 }

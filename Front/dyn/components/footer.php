@@ -45,9 +45,8 @@ declare(strict_types=1);
                     <ul class="footer-links">
                         <li><a href="/about">About Us</a></li>
                         <li><a href="/portfolio">Portfolio</a></li>
-                        <li><a href="/contact">Contact Leads</a></li>
-                        <li><a href="/contact">Careers</a></li>
-                        <li><a href="/about">Privacy Policy</a></li>
+                        <li><a href="/blog">Blog Insights</a></li>
+                        <li><a href="/p/privacy-policy">Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>
@@ -61,5 +60,7 @@ declare(strict_types=1);
 
     <!-- App JavaScript Engine Bundle -->
     <script src="/Front/static/js/app.js"></script>
+    <!-- Injected Custom Footer Scripts (CMS Integration Tool) -->
+    <?php echo getenv('FOOTER_CODE') !== false ? getenv('FOOTER_CODE') : ''; ?>
 </body>
 </html>

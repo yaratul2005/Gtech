@@ -111,6 +111,43 @@ $router->post('/admin/database/migrate', function() {
     $c = new \Setup\Admin\Controllers\AdminController();
     $c->migrateDatabase();
 });
+$router->get('/admin/pages', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->pages();
+});
+$router->post('/admin/pages/create', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->createPage();
+});
+$router->post('/admin/pages/delete', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->deletePage();
+});
+$router->get('/admin/posts', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->posts();
+});
+$router->post('/admin/posts/create', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->createPost();
+});
+$router->post('/admin/posts/delete', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->deletePost();
+});
+
+// Dynamic frontend routes
+$router->get('/blog', function() {
+    return view('blog', ['title' => 'Blog Updates']);
+});
+$router->get('/blog/*', [ \Setup\Admin\Controllers\AdminController::class, 'showBlogPost' ]);
+$router->get('/p/*', [ \Setup\Admin\Controllers\AdminController::class, 'showDynamicPage' ]);
 
 // Internal API routes
 $router->post('/api/contact', function() {

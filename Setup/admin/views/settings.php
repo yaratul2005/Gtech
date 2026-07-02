@@ -85,6 +85,22 @@ $s = $settings;
                     <label class="form-label">Sender Display Name</label>
                     <input type="text" name="smtp_from_name" class="form-input" value="<?php echo htmlspecialchars($s['smtp_from_name'] ?? 'Great Endured Technology'); ?>">
                 </div>
+        </div>
+
+        <!-- Section 3: Custom Code Injection -->
+        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 25px; margin-top: 25px;">
+            <h4 style="margin: 0 0 15px 0; color: var(--color-white); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em;">3. Code Injection & Script Integrations</h4>
+            <div class="grid grid-2" style="gap: 25px;">
+                <div class="form-group">
+                    <label class="form-label">Custom Header Code (in &lt;head&gt;)</label>
+                    <textarea name="header_code" class="form-input" style="min-height: 100px; font-family: monospace; font-size: 0.85rem;" placeholder="e.g. <!-- Google Analytics --> <script>...</script>"><?php echo htmlspecialchars($s['header_code'] ?? ''); ?></textarea>
+                    <p style="font-size: 0.75rem; color: var(--color-mist); margin-top: 5px;">This HTML/JS code will be printed at the bottom of the &lt;head&gt; on all pages.</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Custom Footer Code (before &lt;/body&gt;)</label>
+                    <textarea name="footer_code" class="form-input" style="min-height: 100px; font-family: monospace; font-size: 0.85rem;" placeholder="e.g. <script>console.log('GET Loaded');</script>"><?php echo htmlspecialchars($s['footer_code'] ?? ''); ?></textarea>
+                    <p style="font-size: 0.75rem; color: var(--color-mist); margin-top: 5px;">This HTML/JS code will be printed right before the &lt;/body&gt; tag close on all pages.</p>
+                </div>
             </div>
         </div>
 

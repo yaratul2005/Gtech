@@ -30,11 +30,14 @@ function isActive(string $path, string $currentUri): string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SEO Meta Tags (Web App Dev Guidelines) -->
-    <title><?php echo isset($title) ? htmlspecialchars($title) . " | Great Endured Technology" : "Great Endured Technology | Premium Tech Agency"; ?></title>
-    <meta name="description" content="Great Endured Technology is a premier digital agency providing enterprise WordPress development, custom PHP solutions, SEO, digital marketing, Canva content, and 3D mockups.">
-    <meta name="keywords" content="Great Endured Technology, digital agency, WordPress development, Elementor, PHP website, SEO ranking, Digital marketing, Canva design, 3D mockups, ecommerce startup">
-    <link rel="canonical" href="https://greatentech.com<?php echo htmlspecialchars($currentUri); ?>">
+    <!-- SEO Meta Tags (Web App Dev Guidelines & CMS Settings) -->
+    <title><?php echo isset($title) ? htmlspecialchars($title) . " | " . (getenv('APP_NAME') ?: 'Great Endured Technology') : (getenv('APP_NAME') ?: 'Great Endured Technology') . " | Premium Tech Agency"; ?></title>
+    <meta name="description" content="<?php echo htmlspecialchars(getenv('APP_DESC') ?: 'Great Endured Technology is a premier digital agency providing enterprise WordPress development, custom PHP solutions, SEO, digital marketing, Canva content, and 3D mockups.'); ?>">
+    <meta name="keywords" content="<?php echo htmlspecialchars(getenv('APP_KEYWORDS') ?: 'Great Endured Technology, digital agency, WordPress development, Elementor, PHP website, SEO ranking, Digital marketing, Canva design, 3D mockups, ecommerce startup'); ?>">
+    <link rel="canonical" href="<?php echo htmlspecialchars(getenv('APP_URL') ?: 'https://greatentech.com') . htmlspecialchars($currentUri); ?>">
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/Front/static/img/favicon.png" type="image/png">
     
     <!-- Fonts Integration (Resource.md: Outfit & Inter self-hosted/Google Fonts fast-swap) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,9 +46,48 @@ function isActive(string $path, string $currentUri): string
     
     <!-- Main Style Sheet (Compiled and Minified output from local dev) -->
     <link rel="stylesheet" href="/Front/static/css/app.css">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/Front/static/img/favicon.png" onerror="this.style.display='none'">
+
+    <!-- Schema.org Dynamic JSON-LD Structured Data for SEO -->
+    <?php if ($currentUri === '/'): ?>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "<?php echo htmlspecialchars(getenv('APP_NAME') ?: 'Great Endured Technology'); ?>",
+      "url": "<?php echo htmlspecialchars(getenv('APP_URL') ?: 'https://greatentech.com'); ?>",
+      "logo": "<?php echo htmlspecialchars(getenv('APP_URL') ?: 'https://greatentech.com'); ?>/Front/static/img/logo.png",
+      "sameAs": [
+        "https://github.com/yaratul2005/Gtech"
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "<?php echo htmlspecialchars(getenv('APP_NAME') ?: 'Great Endured Technology'); ?>",
+      "url": "<?php echo htmlspecialchars(getenv('APP_URL') ?: 'https://greatentech.com'); ?>",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "<?php echo htmlspecialchars(getenv('APP_URL') ?: 'https://greatentech.com'); ?>/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <?php else: ?>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "<?php echo htmlspecialchars($title ?? 'Great Endured Technology'); ?>",
+      "description": "<?php echo htmlspecialchars(getenv('APP_DESC') ?: 'Great Endured Technology is a premier digital agency...'); ?>",
+      "url": "<?php echo htmlspecialchars(getenv('APP_URL') ?: 'https://greatentech.com') . htmlspecialchars($currentUri); ?>"
+    }
+    </script>
+    <?php endif; ?>
+
+    <!-- Injected Custom Head Script (CMS Integration Tool) -->
+    <?php echo getenv('HEADER_CODE') !== false ? getenv('HEADER_CODE') : ''; ?>
 </head>
 <body>
     <!-- Premium Navigation Bar -->
@@ -61,6 +103,7 @@ function isActive(string $path, string $currentUri): string
                 <li><a href="/about" class="nav-link <?php echo isActive('/about', $currentUri); ?>">About</a></li>
                 <li><a href="/services" class="nav-link <?php echo isActive('/services', $currentUri); ?>">Services</a></li>
                 <li><a href="/portfolio" class="nav-link <?php echo isActive('/portfolio', $currentUri); ?>">Portfolio</a></li>
+                <li><a href="/blog" class="nav-link <?php echo isActive('/blog', $currentUri); ?>">Blog</a></li>
                 <li><a href="/contact" class="nav-link <?php echo isActive('/contact', $currentUri); ?>">Contact</a></li>
             </ul>
             
