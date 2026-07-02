@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
         successAlert.style.display = 'none';
         errorAlert.style.display = 'none';
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Adding...';
+        submitBtn.textContent = 'Saving...';
 
         const formData = new FormData(addForm);
 
@@ -178,14 +178,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 successAlert.style.display = 'block';
                 setTimeout(() => location.reload(), 1000);
             } else {
-                throw new Error(data.message || 'Adding team member failed.');
+                throw new Error(data.message || 'Saving team member failed.');
             }
         } catch (err) {
             errorAlert.textContent = err.message;
             errorAlert.style.display = 'block';
         } finally {
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Add Member';
+            submitBtn.textContent = addForm.action.includes('update') ? 'Update Member' : 'Add Member';
         }
     });
 
@@ -204,12 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const theme = btn.getAttribute('data-theme');
             const bio = btn.getAttribute('data-bio');
 
-            addForm.name.value = name;
-            addForm.role.value = role;
-            addForm.skills.value = skills;
-            addForm.phone.value = phone;
-            addForm.theme.value = theme;
-            addForm.bio.value = bio;
+            addForm.querySelector('[name="name"]').value = name;
+            addForm.querySelector('[name="role"]').value = role;
+            addForm.querySelector('[name="skills"]').value = skills;
+            addForm.querySelector('[name="phone"]').value = phone;
+            addForm.querySelector('[name="theme"]').value = theme;
+            addForm.querySelector('[name="bio"]').value = bio;
 
             memberIdInput.value = id;
             addForm.action = '/admin/team/update';

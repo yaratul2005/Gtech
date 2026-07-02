@@ -129,14 +129,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const csrfToken = "<?php echo csrf_token(); ?>";
 
     let editorInstance;
-    ClassicEditor
-        .create(document.querySelector('#post-editor'))
-        .then(editor => {
-            editorInstance = editor;
-        })
-        .catch(error => {
-            console.error(error);
-        });
+    if (typeof ClassicEditor !== 'undefined') {
+        ClassicEditor
+            .create(document.querySelector('#post-editor'))
+            .then(editor => {
+                editorInstance = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
 
     // Add post
     addForm.addEventListener('submit', async (e) => {
@@ -149,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         successAlert.style.display = 'none';
         errorAlert.style.display = 'none';
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Publishing...';
+        submitBtn.textContent = 'Saving...';
 
         const formData = new FormData(addForm);
 
@@ -166,14 +168,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 successAlert.style.display = 'block';
                 setTimeout(() => location.reload(), 1000);
             } else {
-                throw new Error(data.message || 'Publishing article failed.');
+                throw new Error(data.message || 'Saving post failed.');
             }
         } catch (err) {
             errorAlert.textContent = err.message;
             errorAlert.style.display = 'block';
         } finally {
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Publish Post';
+            submitBtn.textContent = addForm.action.includes('update') ? 'Update Post' : 'Publish Post';
         }
     });
 
@@ -190,11 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const rawContentTextarea = document.getElementById(`raw-content-${slug}`);
             const rawContent = rawContentTextarea ? rawContentTextarea.value : '';
 
-            addForm.title.value = title;
-            addForm.slug.value = slug;
-            addForm.meta_desc.value = metaDesc;
+            addForm.querySelector('[name="title"]').value = title;
+            addForm.querySelector('[name="slug"]').value = slug;
+            addForm.querySelector('[name="meta_desc"]').value = metaDesc;
             if (editorInstance) {
                 editorInstance.setData(rawContent);
+            } else {
+                addForm.querySelector('[name="content"]').value = rawContent;
             }
 
             postOriginalSlug.value = slug;
