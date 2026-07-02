@@ -10,25 +10,56 @@ declare(strict_types=1);
 $servicesJson = json_decode((string)file_get_contents(__DIR__ . '/../../../Vault/content/services.json'), true);
 $services = $servicesJson['services'] ?? [];
 
-// Helper function to map icons to SVGs in a unified format
-function getServiceSvg(string $icon): string
+// Helper function to map icons to custom PNGs or fallbacks
+function getServiceIconHtml(string $icon): string
 {
-    switch ($icon) {
-        case 'wordpress':
-            return '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>';
-        case 'code':
-            return '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>';
-        case 'trending-up':
-            return '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>';
-        case 'megaphone':
-            return '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>';
-        case 'cube':
-            return '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>';
-        case 'shopping-bag':
-            return '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>';
-        default:
-            return '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>';
+    $pngMap = [
+        'wordpress' => '/Vault/assets/wordpress.png',
+        'code' => '/Vault/assets/php.png',
+        'trending-up' => '/Vault/assets/seo.png',
+        'megaphone' => '/Vault/assets/ads.png',
+        'cube' => '/Vault/assets/3D.png',
+        'shopping-bag' => '/Vault/assets/woo.png',
+    ];
+
+    if (isset($pngMap[$icon])) {
+        // High fidelity floating PNG icon with glow effect
+        return '<div class="service-png-wrapper" style="
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--glass-border);
+            padding: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            margin-bottom: 25px;
+        ">
+            <img src="' . htmlspecialchars($pngMap[$icon]) . '" alt="" style="
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+                transition: transform 0.3s ease;
+            " class="service-png-icon">
+        </div>';
     }
+
+    // Fallback to SVGs
+    $svg = '';
+    switch ($icon) {
+        case 'shield-check':
+            $svg = '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>';
+            break;
+        default:
+            $svg = '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>';
+            break;
+    }
+
+    return '<div class="card-icon" style="margin-bottom: 25px;">' . $svg . '</div>';
 }
 ?>
 
@@ -43,9 +74,7 @@ function getServiceSvg(string $icon): string
         <div class="grid grid-2" style="margin-top: 50px;">
             <?php foreach ($services as $index => $s): ?>
                 <div class="card" data-reveal data-delay="<?php echo ($index % 2) * 100; ?>">
-                    <div class="card-icon">
-                        <?php echo getServiceSvg($s['icon'] ?? ''); ?>
-                    </div>
+                    <?php echo getServiceIconHtml($s['icon'] ?? ''); ?>
                     <h3 class="card-title"><?php echo htmlspecialchars($s['name']); ?></h3>
                     <p class="card-desc"><?php echo htmlspecialchars($s['description']); ?></p>
                     
@@ -71,3 +100,15 @@ function getServiceSvg(string $icon): string
         </div>
     </div>
 </section>
+
+<style>
+.card:hover .service-png-icon {
+    transform: scale(1.18) rotate(3deg);
+    filter: drop-shadow(0 8px 16px rgba(0, 212, 255, 0.4)) !important;
+}
+.card:hover .service-png-wrapper {
+    border-color: rgba(0, 212, 255, 0.4) !important;
+    background: rgba(0, 212, 255, 0.04) !important;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.15);
+}
+</style>
