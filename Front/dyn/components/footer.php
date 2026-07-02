@@ -74,6 +74,8 @@ if (file_exists($pagesFile)) {
                 <p>Designed for Excellence.</p>
             </div>
         </div>
+        
+        <?php require __DIR__ . '/cookie-consent.php'; ?>
     </footer>
 
     <!-- App JavaScript Engine Bundle -->
