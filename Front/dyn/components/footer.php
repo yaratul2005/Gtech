@@ -12,6 +12,7 @@ declare(strict_types=1);
             <div class="grid footer-grid">
                 <div class="footer-brand" data-reveal>
                     <a href="/" class="logo">
+                        <img src="/Front/static/img/logo.png" alt="GET Logo">
                         <span>GET.</span>
                     </a>
                     <p>Great Endured Technology is a state-of-the-art digital agency building next-generation websites, digital experiences, and brand identities.</p>

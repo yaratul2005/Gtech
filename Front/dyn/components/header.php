@@ -52,6 +52,7 @@ function isActive(string $path, string $currentUri): string
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
             <a href="/" class="logo" id="nav-logo">
+                <img src="/Front/static/img/logo.png" alt="GET Logo">
                 <span>GET.</span>
             </a>
             
