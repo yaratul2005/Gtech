@@ -43,8 +43,8 @@ declare(strict_types=1);
                 </div>
 
                 <div class="form-group" style="margin-bottom: 25px;">
-                    <label class="form-label">Post Content (HTML supported)</label>
-                    <textarea name="content" class="form-input" style="min-height: 150px; font-family: monospace; font-size: 0.85rem;" placeholder="<p>Write your article here...</p>" required></textarea>
+                    <label class="form-label">Post Content</label>
+                    <textarea name="content" id="post-editor" class="form-input" style="min-height: 150px; font-family: monospace; font-size: 0.85rem;" placeholder="Write your article here..."></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-full" id="add-post-submit">Publish Post</button>
@@ -89,6 +89,23 @@ declare(strict_types=1);
     </div>
 </div>
 
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/editor.js"></script>
+<style>
+/* Adjust CKEditor styles for dark mode alignment */
+.ck-editor__editable {
+    min-height: 250px;
+    background-color: #0d1117 !important;
+    color: #c9d1d9 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+.ck-toolbar {
+    background-color: #161b22 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+.ck-toolbar * {
+    color: #c9d1d9 !important;
+}
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const addForm = document.getElementById('post-add-form');
@@ -97,9 +114,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = document.getElementById('add-post-submit');
     const csrfToken = "<?php echo csrf_token(); ?>";
 
+    let editorInstance;
+    ClassicEditor
+        .create(document.querySelector('#post-editor'))
+        .then(editor => {
+            editorInstance = editor;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
     // Add post
     addForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        if (editorInstance) {
+            editorInstance.updateSourceElement();
+        }
         
         successAlert.style.display = 'none';
         errorAlert.style.display = 'none';
