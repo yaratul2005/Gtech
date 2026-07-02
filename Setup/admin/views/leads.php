@@ -55,7 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
-            if (!confirm('Are you sure you want to delete this inquiry permanently?')) {
+            const confirmed = await window.customConfirm('Delete Inquiry', 'Are you sure you want to delete this inquiry permanently?');
+            if (!confirmed) {
                 return;
             }
 

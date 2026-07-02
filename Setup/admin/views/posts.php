@@ -233,7 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Delete post
     document.querySelectorAll('.delete-post-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
-            if (!confirm('Are you sure you want to delete this blog post permanently? This action cannot be undone.')) {
+            const confirmed = await window.customConfirm('Delete Post', 'Are you sure you want to delete this blog post permanently? This action cannot be undone.');
+            if (!confirmed) {
                 return;
             }
 

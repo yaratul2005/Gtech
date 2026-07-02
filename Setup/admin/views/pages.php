@@ -233,7 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Delete page
     document.querySelectorAll('.delete-page-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
-            if (!confirm('Are you sure you want to delete this dynamic page permanently? This action cannot be undone.')) {
+            const confirmed = await window.customConfirm('Delete Page', 'Are you sure you want to delete this dynamic page permanently? This action cannot be undone.');
+            if (!confirmed) {
                 return;
             }
 

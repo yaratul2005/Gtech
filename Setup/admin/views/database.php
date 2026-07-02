@@ -105,7 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const csrfToken = "<?php echo csrf_token(); ?>";
 
     migrationBtn.addEventListener('click', async () => {
-        if (!confirm('Warning: Re-running SQL migrations will create/verify tables schema. SQL changes will be logged in setup.log.md. Proceed?')) {
+        const confirmed = await window.customConfirm('Run SQL Migration', 'Warning: Re-running SQL migrations will create/verify tables schema. SQL changes will be logged in setup.log.md. Proceed?');
+        if (!confirmed) {
             return;
         }
 

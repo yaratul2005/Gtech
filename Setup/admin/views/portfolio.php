@@ -143,7 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Delete portfolio item
     document.querySelectorAll('.delete-portfolio-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
-            if (!confirm('Are you sure you want to delete this portfolio project from the dynamic showcase?')) {
+            const confirmed = await window.customConfirm('Delete Showcase Project', 'Are you sure you want to delete this portfolio project from the dynamic showcase?');
+            if (!confirmed) {
                 return;
             }
 

@@ -540,5 +540,141 @@ $currentTitle = $title ?? 'GET Control Panel';
             </main>
         <?php endif; ?>
     </div>
+
+    <!-- Custom Premium Confirm Modal -->
+    <div id="custom-confirm-modal" class="custom-modal-overlay">
+        <div class="custom-modal-card">
+            <div class="custom-modal-header">
+                <h3 id="custom-modal-title">Confirm Action</h3>
+                <button id="custom-modal-close" class="custom-modal-close-btn">&times;</button>
+            </div>
+            <div class="custom-modal-body">
+                <p id="custom-modal-message">Are you sure you want to proceed?</p>
+            </div>
+            <div class="custom-modal-footer">
+                <button id="custom-modal-cancel" class="btn btn-secondary btn-sm" style="font-size: 0.85rem; padding: 8px 16px; border-color: rgba(255,255,255,0.05); height: auto;">Cancel</button>
+                <button id="custom-modal-confirm" class="btn btn-primary btn-sm" style="font-size: 0.85rem; padding: 8px 16px; background: #ef4444; border-color: #ef4444; color: #fff; height: auto;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(4, 6, 10, 0.7);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .custom-modal-overlay.show {
+        opacity: 1;
+    }
+    .custom-modal-card {
+        background: linear-gradient(135deg, rgba(17, 22, 34, 0.95) 0%, rgba(9, 13, 22, 0.98) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        width: 90%;
+        max-width: 450px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 212, 255, 0.1);
+        transform: scale(0.92);
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+    }
+    .custom-modal-overlay.show .custom-modal-card {
+        transform: scale(1);
+    }
+    .custom-modal-header {
+        padding: 20px 25px 15px 25px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .custom-modal-header h3 {
+        margin: 0;
+        font-size: 1.15rem;
+        font-family: 'Outfit', sans-serif;
+        color: var(--color-white);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+    .custom-modal-close-btn {
+        background: transparent;
+        border: none;
+        color: var(--color-mist);
+        font-size: 1.75rem;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+        transition: color 0.2s;
+    }
+    .custom-modal-close-btn:hover {
+        color: var(--color-white);
+    }
+    .custom-modal-body {
+        padding: 22px 25px;
+        color: var(--color-fog);
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+    .custom-modal-footer {
+        padding: 15px 25px 20px 25px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+    </style>
+
+    <script>
+    window.customConfirm = function(title, message) {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('custom-confirm-modal');
+            const titleEl = document.getElementById('custom-modal-title');
+            const messageEl = document.getElementById('custom-modal-message');
+            const cancelBtn = document.getElementById('custom-modal-cancel');
+            const confirmBtn = document.getElementById('custom-modal-confirm');
+            const closeBtn = document.getElementById('custom-modal-close');
+
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            modal.style.display = 'flex';
+            // Trigger reflow
+            modal.offsetHeight;
+            modal.classList.add('show');
+
+            function cleanup(result) {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 250);
+                
+                cancelBtn.removeEventListener('click', onCancel);
+                confirmBtn.removeEventListener('click', onConfirm);
+                closeBtn.removeEventListener('click', onClose);
+                
+                resolve(result);
+            }
+
+            function onCancel() { cleanup(false); }
+            function onConfirm() { cleanup(true); }
+            function onClose() { cleanup(false); }
+
+            cancelBtn.addEventListener('click', onCancel);
+            confirmBtn.addEventListener('click', onConfirm);
+            closeBtn.addEventListener('click', onClose);
+        });
+    };
+    </script>
 </body>
 </html>

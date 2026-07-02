@@ -240,7 +240,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Delete team member
     document.querySelectorAll('.delete-team-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
-            if (!confirm('Are you sure you want to remove this team member permanently?')) {
+            const confirmed = await window.customConfirm('Remove Team Member', 'Are you sure you want to remove this team member permanently?');
+            if (!confirmed) {
                 return;
             }
 
