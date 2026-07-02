@@ -60,26 +60,25 @@ spl_autoload_register(function ($class) {
     // e.g. Back\Controllers\ContactController -> Back/controllers/ContactController.php
     $classPath = str_replace('\\', '/', $class);
     
-    // Check if path starts with Back/
-    if (strpos($classPath, 'Back/') === 0) {
-        // Namespace parts: Back/Core, Back/Controllers, Back/Models, Back/Services
-        // Fix folder case according to protocol (e.g. Back/core, Back/controllers, Back/models, Back/services)
+    // Check if path starts with Back/ or Setup/
+    if (strpos($classPath, 'Back/') === 0 || strpos($classPath, 'Setup/') === 0) {
         $parts = explode('/', $classPath);
-        if (count($parts) >= 3) {
-            $parts[1] = strtolower($parts[1]); // Make subdirectory lowercase (core, controllers, models, services)
+        $lastIdx = count($parts) - 1;
+        $originalLast = $parts[$lastIdx];
+
+        // Lowercase all directories, keeping the class name (last element) original
+        for ($i = 1; $i < $lastIdx; $i++) {
+            $parts[$i] = strtolower($parts[$i]);
         }
         
-        // Check 1: Exact casing (e.g. Back/core/Router.php)
+        // Check 1: Exact casing (e.g. Setup/auth/AuthMiddleware.php)
         $file = __DIR__ . '/../../' . implode('/', $parts) . '.php';
         if (file_exists($file)) {
             require_once $file;
             return;
         }
 
-        // Check 2: Lowercase filename (e.g. Back/core/router.php)
-        $lastIdx = count($parts) - 1;
-        $originalLast = $parts[$lastIdx];
-        
+        // Check 2: Lowercase filename (e.g. Setup/auth/authmiddleware.php)
         $parts[$lastIdx] = strtolower($originalLast);
         $file = __DIR__ . '/../../' . implode('/', $parts) . '.php';
         if (file_exists($file)) {
@@ -89,34 +88,6 @@ spl_autoload_register(function ($class) {
 
         // Check 3: Lowercase first letter of filename (e.g. Back/middleware/rateLimit.php)
         $parts[$lastIdx] = lcfirst($originalLast);
-        $file = __DIR__ . '/../../' . implode('/', $parts) . '.php';
-        if (file_exists($file)) {
-            require_once $file;
-            return;
-        }
-    }
-
-    // Check if path starts with Setup/
-    if (strpos($classPath, 'Setup/') === 0) {
-        $parts = explode('/', $classPath);
-        if (isset($parts[1])) {
-            $parts[1] = strtolower($parts[1]); // e.g. Setup/admin
-        }
-        if (isset($parts[2])) {
-            $parts[2] = strtolower($parts[2]); // e.g. Setup/admin/controllers
-        }
-
-        // Check 1: Exact casing (e.g. Setup/admin/controllers/AdminController.php)
-        $file = __DIR__ . '/../../' . implode('/', $parts) . '.php';
-        if (file_exists($file)) {
-            require_once $file;
-            return;
-        }
-
-        // Check 2: Lowercase filename
-        $lastIdx = count($parts) - 1;
-        $originalLast = $parts[$lastIdx];
-        $parts[$lastIdx] = strtolower($originalLast);
         $file = __DIR__ . '/../../' . implode('/', $parts) . '.php';
         if (file_exists($file)) {
             require_once $file;
