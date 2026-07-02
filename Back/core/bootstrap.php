@@ -46,9 +46,10 @@ function loadEnv(string $path): void
 loadEnv(__DIR__ . '/../../.env');
 
 // Set PHP execution parameters (Resource.md: Shared Hosting limits check)
-ini_set('display_errors', $_ENV['APP_ENV'] === 'development' ? '1' : '0');
-ini_set('display_startup_errors', $_ENV['APP_ENV'] === 'development' ? '1' : '0');
-error_reporting($_ENV['APP_ENV'] === 'development' ? E_ALL : 0);
+$appEnv = $_ENV['APP_ENV'] ?? 'production';
+ini_set('display_errors', $appEnv === 'development' ? '1' : '0');
+ini_set('display_startup_errors', $appEnv === 'development' ? '1' : '0');
+error_reporting($appEnv === 'development' ? E_ALL : 0);
 
 // Set default timezone
 date_default_timezone_set('Asia/Dhaka');
@@ -67,8 +68,28 @@ spl_autoload_register(function ($class) {
         if (count($parts) >= 3) {
             $parts[1] = strtolower($parts[1]); // Make subdirectory lowercase (core, controllers, models, services)
         }
-        $file = __DIR__ . '/../../' . implode('/', $parts) . '.php';
         
+        // Check 1: Exact casing (e.g. Back/core/Router.php)
+        $file = __DIR__ . '/../../' . implode('/', $parts) . '.php';
+        if (file_exists($file)) {
+            require_once $file;
+            return;
+        }
+
+        // Check 2: Lowercase filename (e.g. Back/core/router.php)
+        $lastIdx = count($parts) - 1;
+        $originalLast = $parts[$lastIdx];
+        
+        $parts[$lastIdx] = strtolower($originalLast);
+        $file = __DIR__ . '/../../' . implode('/', $parts) . '.php';
+        if (file_exists($file)) {
+            require_once $file;
+            return;
+        }
+
+        // Check 3: Lowercase first letter of filename (e.g. Back/middleware/rateLimit.php)
+        $parts[$lastIdx] = lcfirst($originalLast);
+        $file = __DIR__ . '/../../' . implode('/', $parts) . '.php';
         if (file_exists($file)) {
             require_once $file;
             return;
