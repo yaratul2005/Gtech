@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1",
+    "name": "Ratul Chowdhury",
+    "role": "Founder & Lead Architect",
+    "bio": "Specializes in full-stack engineering, AI integrations, and high-performance server architectures. Driving innovation and delivering end-to-end digital solutions.",
+    "skills": "PHP, Node.js, Python, DevOps, AI Integrations",
+    "image": "/Front/static/img/logo.png",
+    "phone": "+8801726383838"
+  },
+  {
+    "id": "2",
+    "name": "Sarah Jenkins",
+    "role": "UI/UX & Creative Director",
+    "bio": "Crafting premium user interfaces and interactive customer journeys. Turning product requirements into visual designs that inspire and engage users.",
+    "skills": "Figma, Webflow, UI Design, Brand Identity",
+    "image": "/Front/static/img/logo.png",
+    "phone": "+15550199"
+  }
+]

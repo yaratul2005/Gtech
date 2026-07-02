@@ -45,6 +45,7 @@ declare(strict_types=1);
                     <ul class="footer-links">
                         <li><a href="/about">About Us</a></li>
                         <li><a href="/portfolio">Portfolio</a></li>
+                        <li><a href="/team">Our Team</a></li>
                         <li><a href="/blog">Blog Insights</a></li>
                         <li><a href="/p/privacy-policy">Privacy Policy</a></li>
                     </ul>

@@ -18,6 +18,7 @@ class AdminController
     private string $settingsFile;
     private string $pagesFile;
     private string $postsFile;
+    private string $teamFile;
 
     public function __construct()
     {
@@ -27,6 +28,7 @@ class AdminController
         $this->settingsFile = __DIR__ . '/../../../Vault/content/settings.json';
         $this->pagesFile = __DIR__ . '/../../../Vault/content/pages.json';
         $this->postsFile = __DIR__ . '/../../../Vault/content/posts.json';
+        $this->teamFile = __DIR__ . '/../../../Vault/content/team.json';
     }
 
     public function showLoginForm(): void
@@ -724,6 +726,119 @@ class AdminController
             }
             fclose($fp);
         }
+    }
+
+    public function team(): void
+    {
+        $team = [];
+        if (file_exists($this->teamFile)) {
+            $team = json_decode((string)file_get_contents($this->teamFile), true) ?: [];
+        }
+        $this->renderView('team', [
+            'title' => 'Team Manager',
+            'team' => $team
+        ]);
+    }
+
+    public function createTeamMember(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $name = trim($_POST['name'] ?? '');
+        $role = trim($_POST['role'] ?? '');
+        $bio = trim($_POST['bio'] ?? '');
+        $skills = trim($_POST['skills'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+
+        if (empty($name) || empty($role) || empty($bio)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Name, Role, and Biography are required.']);
+            return;
+        }
+
+        $imagePath = '/Front/static/img/logo.png'; // default placeholder
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $fileTmpPath = $_FILES['image']['tmp_name'];
+            $fileName = $_FILES['image']['name'];
+            $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+            
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+            if (in_array($fileExtension, $allowedExtensions, true)) {
+                $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+                $uploadFileDir = __DIR__ . '/../../../Vault/uploads/';
+                if (!is_dir($uploadFileDir)) {
+                    mkdir($uploadFileDir, 0755, true);
+                }
+                $destPath = $uploadFileDir . $newFileName;
+                
+                if (move_uploaded_file($fileTmpPath, $destPath)) {
+                    $imagePath = '/Vault/uploads/' . $newFileName;
+                }
+            }
+        }
+
+        $team = [];
+        if (file_exists($this->teamFile)) {
+            $team = json_decode((string)file_get_contents($this->teamFile), true) ?: [];
+        }
+
+        $id = uniqid();
+        $newItem = [
+            'id' => $id,
+            'name' => $name,
+            'role' => $role,
+            'bio' => $bio,
+            'skills' => $skills,
+            'image' => $imagePath,
+            'phone' => $phone
+        ];
+
+        $team[] = $newItem;
+
+        file_put_contents($this->teamFile, json_encode($team, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        echo json_encode(['success' => true, 'message' => 'Team member added successfully!']);
+    }
+
+    public function deleteTeamMember(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $id = $_POST['id'] ?? '';
+        if (empty($id)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Team member ID is required.']);
+            return;
+        }
+
+        $team = [];
+        if (file_exists($this->teamFile)) {
+            $team = json_decode((string)file_get_contents($this->teamFile), true) ?: [];
+        }
+
+        $updated = array_filter($team, fn($item) => $item['id'] !== $id);
+
+        if (count($team) === count($updated)) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Team member not found.']);
+            return;
+        }
+
+        file_put_contents($this->teamFile, json_encode(array_values($updated), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        echo json_encode(['success' => true, 'message' => 'Team member deleted successfully!']);
     }
 
     private function getServices(): array

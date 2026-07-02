@@ -43,6 +43,10 @@ $router->get('/contact', function() {
     return view('contact', ['title' => 'Contact Us']);
 });
 
+$router->get('/team', function() {
+    return view('team', ['title' => 'Our Team']);
+});
+
 // Admin Panel routes (Setup & Governance layer mapped to /admin)
 $router->get('/admin', function() {
     \Setup\Auth\AuthMiddleware::redirectToDashboardOrLogin();
@@ -140,6 +144,22 @@ $router->post('/admin/posts/delete', function() {
     \Setup\Auth\AuthMiddleware::verify();
     $c = new \Setup\Admin\Controllers\AdminController();
     $c->deletePost();
+});
+
+$router->get('/admin/team', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->team();
+});
+$router->post('/admin/team/create', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->createTeamMember();
+});
+$router->post('/admin/team/delete', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->deleteTeamMember();
 });
 
 // Dynamic frontend routes

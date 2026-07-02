@@ -104,6 +104,7 @@ function isActive(string $path, string $currentUri): string
                 <li><a href="/about" class="nav-link <?php echo isActive('/about', $currentUri); ?>">About</a></li>
                 <li><a href="/services" class="nav-link <?php echo isActive('/services', $currentUri); ?>">Services</a></li>
                 <li><a href="/portfolio" class="nav-link <?php echo isActive('/portfolio', $currentUri); ?>">Portfolio</a></li>
+                <li><a href="/team" class="nav-link <?php echo isActive('/team', $currentUri); ?>">Team</a></li>
                 <li><a href="/blog" class="nav-link <?php echo isActive('/blog', $currentUri); ?>">Blog</a></li>
                 <li><a href="/contact" class="nav-link <?php echo isActive('/contact', $currentUri); ?>">Contact</a></li>
             </ul>
