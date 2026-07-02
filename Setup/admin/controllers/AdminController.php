@@ -14,11 +14,15 @@ class AdminController
 {
     private string $leadsFile;
     private string $servicesFile;
+    private string $portfolioFile;
+    private string $settingsFile;
 
     public function __construct()
     {
         $this->leadsFile = __DIR__ . '/../../../Vault/cache/leads.json';
         $this->servicesFile = __DIR__ . '/../../../Vault/content/services.json';
+        $this->portfolioFile = __DIR__ . '/../../../Vault/content/portfolio.json';
+        $this->settingsFile = __DIR__ . '/../../../Vault/content/settings.json';
     }
 
     public function showLoginForm(): void
@@ -186,6 +190,215 @@ class AdminController
         file_put_contents($this->servicesFile, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         echo json_encode(['success' => true, 'message' => 'Service CMS info updated successfully.']);
+    }
+
+    public function settings(): void
+    {
+        $settings = [];
+        if (file_exists($this->settingsFile)) {
+            $settings = json_decode((string)file_get_contents($this->settingsFile), true) ?: [];
+        }
+        $this->renderView('settings', [
+            'title' => 'Settings & SMTP CP',
+            'settings' => $settings
+        ]);
+    }
+
+    public function updateSettings(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $config = [
+            'app_name' => trim($_POST['app_name'] ?? 'Great Endured Technology'),
+            'app_url' => trim($_POST['app_url'] ?? 'https://greatentech.com'),
+            'app_desc' => trim($_POST['app_desc'] ?? ''),
+            'app_keywords' => trim($_POST['app_keywords'] ?? ''),
+            'smtp_host' => trim($_POST['smtp_host'] ?? ''),
+            'smtp_port' => trim($_POST['smtp_port'] ?? '587'),
+            'smtp_user' => trim($_POST['smtp_user'] ?? ''),
+            'smtp_pass' => trim($_POST['smtp_pass'] ?? ''),
+            'smtp_from' => trim($_POST['smtp_from'] ?? 'contact@greatentech.com'),
+            'smtp_from_name' => trim($_POST['smtp_from_name'] ?? 'Great Endured Technology')
+        ];
+
+        file_put_contents($this->settingsFile, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        echo json_encode(['success' => true, 'message' => 'Site and SMTP configuration saved successfully!']);
+    }
+
+    public function portfolio(): void
+    {
+        $portfolio = [];
+        if (file_exists($this->portfolioFile)) {
+            $portfolio = json_decode((string)file_get_contents($this->portfolioFile), true) ?: [];
+        }
+        $this->renderView('portfolio', [
+            'title' => 'Portfolio Manager',
+            'portfolio' => $portfolio
+        ]);
+    }
+
+    public function createPortfolioItem(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $title = trim($_POST['title'] ?? '');
+        $category = trim($_POST['category'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $theme = trim($_POST['theme'] ?? 'linear-gradient(135deg, #090d16 0%, #0a2540 100%)');
+        $icon = trim($_POST['icon'] ?? 'globe');
+
+        if (empty($title) || empty($category) || empty($description)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Title, Category, and Description are required.']);
+            return;
+        }
+
+        $portfolio = [];
+        if (file_exists($this->portfolioFile)) {
+            $portfolio = json_decode((string)file_get_contents($this->portfolioFile), true) ?: [];
+        }
+
+        // Generate ID from slug
+        $id = strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $title));
+
+        $newItem = [
+            'id' => $id,
+            'title' => $title,
+            'category' => $category,
+            'description' => $description,
+            'theme' => $theme,
+            'icon' => $icon,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        $portfolio[] = $newItem;
+
+        file_put_contents($this->portfolioFile, json_encode($portfolio, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        echo json_encode(['success' => true, 'message' => 'Portfolio item added successfully!']);
+    }
+
+    public function deletePortfolioItem(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $id = $_POST['id'] ?? '';
+        if (empty($id)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'ID is required.']);
+            return;
+        }
+
+        $portfolio = [];
+        if (file_exists($this->portfolioFile)) {
+            $portfolio = json_decode((string)file_get_contents($this->portfolioFile), true) ?: [];
+        }
+
+        $updated = array_filter($portfolio, fn($item) => $item['id'] !== $id);
+        if (count($portfolio) === count($updated)) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Portfolio item not found.']);
+            return;
+        }
+
+        $updated = array_values($updated);
+        file_put_contents($this->portfolioFile, json_encode($updated, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        echo json_encode(['success' => true, 'message' => 'Portfolio item deleted successfully.']);
+    }
+
+    public function database(): void
+    {
+        $dbConnected = false;
+        $dbError = '';
+        $leadsTableCount = 0;
+        $latency = 0;
+
+        $start = microtime(true);
+        $db = \Back\Core\DB::getConnection();
+        $end = microtime(true);
+        
+        if ($db !== null) {
+            $dbConnected = true;
+            $latency = round(($end - $start) * 1000, 2); // latency in ms
+            try {
+                $stmt = $db->query("SELECT COUNT(*) FROM leads");
+                $leadsTableCount = (int)$stmt->fetchColumn();
+            } catch (\Exception $e) {
+                $dbError = "Table error: " . $e->getMessage();
+            }
+        } else {
+            $dbError = "Could not establish a connection to host server.";
+        }
+
+        $this->renderView('database', [
+            'title' => 'Database Tools',
+            'dbConnected' => $dbConnected,
+            'dbError' => $dbError,
+            'leadsTableCount' => $leadsTableCount,
+            'latency' => $latency
+        ]);
+    }
+
+    public function migrateDatabase(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $db = \Back\Core\DB::getConnection();
+        if ($db === null) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Database connection failed. Verify XAMPP/MySQL settings.']);
+            return;
+        }
+
+        $schemaFile = __DIR__ . '/../../db/schema.sql';
+        if (!file_exists($schemaFile)) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Migration schema.sql file not found.']);
+            return;
+        }
+
+        try {
+            $sql = file_get_contents($schemaFile);
+            $db->exec($sql);
+
+            // Log action to setup.log.md (RBP idempotent check rule)
+            $logFile = __DIR__ . '/../../setup.log.md';
+            $logEntry = "\n## [" . date('Y-m-d H:i:s') . "] On-Demand Database Migration Run\n";
+            $logEntry .= "- **Action**: Re-scaffolded leads table via admin CP.\n";
+            $logEntry .= "- **Status**: SUCCESS\n";
+            file_put_contents($logFile, $logEntry, FILE_APPEND);
+
+            echo json_encode(['success' => true, 'message' => 'Database schema successfully migrated!']);
+        } catch (\PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Migration execution failed: ' . $e->getMessage()]);
+        }
     }
 
     // -------------------------------------------------------------

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "apex-logistics",
+    "title": "Apex Logistics Platform",
+    "category": "Custom PHP System",
+    "description": "Built a custom client booking, package tracking, and invoice management portal utilizing raw PHP 8 and PDO, running seamlessly on basic shared hosting.",
+    "theme": "linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)",
+    "icon": "globe",
+    "created_at": "2026-07-02 12:00:00"
+  },
+  {
+    "id": "nova-real-estate",
+    "title": "Nova Real Estate Group",
+    "category": "WordPress & Elementor",
+    "description": "Designed a high-end corporate property listings website using Elementor Pro, featuring bespoke property filtering tools and speed optimization audits.",
+    "theme": "linear-gradient(135deg, #090d16 0%, #0a2540 100%)",
+    "icon": "document",
+    "created_at": "2026-07-02 12:05:00"
+  },
+  {
+    "id": "lumina-cosmetics",
+    "title": "Lumina Cosmetics",
+    "category": "3D AI Render",
+    "description": "Created photorealistic 3D product renders from flat raw images, developing social media advertising templates ready for Canva.",
+    "theme": "linear-gradient(135deg, #050508 0%, #1e1b4b 100%)",
+    "icon": "cube",
+    "created_at": "2026-07-02 12:10:00"
+  }
+]

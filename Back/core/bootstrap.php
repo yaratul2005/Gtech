@@ -45,6 +45,19 @@ function loadEnv(string $path): void
 // Load env configurations
 loadEnv(__DIR__ . '/../../.env');
 
+// Merge dynamic settings from settings.json (CMS settings override env settings)
+$settingsFile = __DIR__ . '/../../Vault/content/settings.json';
+if (file_exists($settingsFile)) {
+    $settingsData = json_decode((string)file_get_contents($settingsFile), true);
+    if (is_array($settingsData)) {
+        foreach ($settingsData as $key => $val) {
+            $envKey = strtoupper($key);
+            $_ENV[$envKey] = $val;
+            putenv("{$envKey}={$val}");
+        }
+    }
+}
+
 // Set PHP execution parameters (Resource.md: Shared Hosting limits check)
 $appEnv = $_ENV['APP_ENV'] ?? 'production';
 ini_set('display_errors', $appEnv === 'development' ? '1' : '0');

@@ -1,0 +1,12 @@
+{
+  "app_name": "Great Endured Technology",
+  "app_url": "https://greatentech.com",
+  "app_desc": "Great Endured Technology is a premier digital agency providing enterprise WordPress development, custom PHP solutions, SEO, digital marketing, Canva content, and 3D mockups.",
+  "app_keywords": "Great Endured Technology, digital agency, WordPress development, Elementor, PHP website, SEO ranking, Digital marketing, Canva design, 3D mockups, ecommerce startup",
+  "smtp_host": "",
+  "smtp_port": "587",
+  "smtp_user": "",
+  "smtp_pass": "",
+  "smtp_from": "contact@greatentech.com",
+  "smtp_from_name": "Great Endured Technology"
+}

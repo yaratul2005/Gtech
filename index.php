@@ -76,6 +76,41 @@ $router->post('/admin/services/update', function() {
     $c = new \Setup\Admin\Controllers\AdminController();
     $c->updateService();
 });
+$router->get('/admin/settings', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->settings();
+});
+$router->post('/admin/settings/update', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->updateSettings();
+});
+$router->get('/admin/portfolio', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->portfolio();
+});
+$router->post('/admin/portfolio/create', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->createPortfolioItem();
+});
+$router->post('/admin/portfolio/delete', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->deletePortfolioItem();
+});
+$router->get('/admin/database', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->database();
+});
+$router->post('/admin/database/migrate', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->migrateDatabase();
+});
 
 // Internal API routes
 $router->post('/api/contact', function() {
