@@ -169,6 +169,17 @@ $router->get('/blog', function() {
 $router->get('/blog/*', [ \Setup\Admin\Controllers\AdminController::class, 'showBlogPost' ]);
 $router->get('/p/*', [ \Setup\Admin\Controllers\AdminController::class, 'showDynamicPage' ]);
 
+// Cron SEO update route
+$router->get('/cron/seo', function() {
+    require_once __DIR__ . '/Setup/scripts/seo_generator.php';
+    if (function_exists('generateSeoFiles')) {
+        generateSeoFiles();
+    }
+    header('Content-Type: application/json');
+    echo json_encode(['status' => 'success', 'message' => 'Sitemap and Robots files auto-regenerated successfully.']);
+    exit;
+});
+
 // Internal API routes
 $router->post('/api/contact', function() {
     require_once __DIR__ . '/Tunnel/internal/api.php';

@@ -273,6 +273,7 @@ class AdminController
         ];
 
         file_put_contents($this->settingsFile, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        $this->triggerSeoUpdate();
 
         echo json_encode(['success' => true, 'message' => 'Site, SMTP, Database, and Admin credentials updated successfully!']);
     }
@@ -507,6 +508,7 @@ class AdminController
         $pages[] = $newPage;
 
         file_put_contents($this->pagesFile, json_encode($pages, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        $this->triggerSeoUpdate();
 
         echo json_encode(['success' => true, 'message' => 'Page created successfully!']);
     }
@@ -542,6 +544,7 @@ class AdminController
 
         $updated = array_values($updated);
         file_put_contents($this->pagesFile, json_encode($updated, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        $this->triggerSeoUpdate();
 
         echo json_encode(['success' => true, 'message' => 'Page deleted successfully.']);
     }
@@ -605,6 +608,7 @@ class AdminController
         $posts[] = $newPost;
 
         file_put_contents($this->postsFile, json_encode($posts, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        $this->triggerSeoUpdate();
 
         echo json_encode(['success' => true, 'message' => 'Blog post published successfully!']);
     }
@@ -640,6 +644,7 @@ class AdminController
 
         $updated = array_values($updated);
         file_put_contents($this->postsFile, json_encode($updated, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        $this->triggerSeoUpdate();
 
         echo json_encode(['success' => true, 'message' => 'Blog post deleted successfully.']);
     }
@@ -876,6 +881,17 @@ class AdminController
             require $layoutFile;
         } else {
             echo $content;
+        }
+    }
+
+    private function triggerSeoUpdate(): void
+    {
+        $seoScript = dirname(__DIR__, 2) . '/scripts/seo_generator.php';
+        if (file_exists($seoScript)) {
+            require_once $seoScript;
+            if (function_exists('generateSeoFiles')) {
+                generateSeoFiles();
+            }
         }
     }
 }
