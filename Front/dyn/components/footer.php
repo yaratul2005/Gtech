@@ -40,6 +40,13 @@ declare(strict_types=1);
                     </ul>
                 </div>
                 
+<?php
+$pagesFile = __DIR__ . '/../../../Vault/content/pages.json';
+$footerPages = [];
+if (file_exists($pagesFile)) {
+    $footerPages = json_decode((string)file_get_contents($pagesFile), true) ?: [];
+}
+?>
                 <div class="footer-col" data-reveal data-delay="200">
                     <h3 class="footer-title">Company</h3>
                     <ul class="footer-links">
@@ -47,7 +54,9 @@ declare(strict_types=1);
                         <li><a href="/portfolio">Portfolio</a></li>
                         <li><a href="/team">Our Team</a></li>
                         <li><a href="/blog">Blog Insights</a></li>
-                        <li><a href="/p/privacy-policy">Privacy Policy</a></li>
+                        <?php foreach ($footerPages as $fp): ?>
+                            <li><a href="/p/<?php echo htmlspecialchars($fp['slug']); ?>"><?php echo htmlspecialchars($fp['title']); ?></a></li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
 
