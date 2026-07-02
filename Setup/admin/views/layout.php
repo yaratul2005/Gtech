@@ -272,16 +272,18 @@ $currentTitle = $title ?? 'GET Control Panel';
         left: 0;
         width: 100%;
         height: 100vh;
-        background: linear-gradient(135deg, #091a2f 0%, #030508 100%);
+        background: #030508;
         z-index: 999999;
         transform: translateY(0);
-        transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+        transition: transform 0.7s cubic-bezier(0.85, 0, 0.15, 1);
         pointer-events: all;
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
     ">
-        <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+        <!-- Floating organic loader in center -->
+        <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10;">
             <div class="fluid-glow" style="
                 width: 70px;
                 height: 70px;
@@ -295,6 +297,60 @@ $currentTitle = $title ?? 'GET Control Panel';
                 Loading...
             </div>
         </div>
+
+        <!-- Animated Wave Background Layer 1 -->
+        <div class="loader-wave wave1" style="
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 350px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 120\" preserveAspectRatio=\"none\"><path d=\"M0,60 C300,120 600,0 900,60 L1200,60 L1200,120 L0,120 Z\" fill=\"%23081b2f\" opacity=\"0.4\"/></svg>') repeat-x;
+            background-size: 50% 100%;
+            animation: waveFlow 12s linear infinite;
+            z-index: 2;
+        "></div>
+
+        <!-- Animated Wave Background Layer 2 -->
+        <div class="loader-wave wave2" style="
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 380px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 120\" preserveAspectRatio=\"none\"><path d=\"M0,50 C350,110 550,10 850,60 L1200,60 L1200,120 L0,120 Z\" fill=\"%230d3254\" opacity=\"0.3\"/></svg>') repeat-x;
+            background-size: 50% 100%;
+            animation: waveFlowReverse 16s linear infinite;
+            z-index: 1;
+        "></div>
+
+        <!-- Animated Wave Background Layer 3 (Foreground Deep Wave) -->
+        <div class="loader-wave wave3" style="
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 320px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 120\" preserveAspectRatio=\"none\"><path d=\"M0,40 C250,90 650,20 950,50 L1200,60 L1200,120 L0,120 Z\" fill=\"%2300f2fe\" opacity=\"0.15\"/></svg>') repeat-x;
+            background-size: 50% 100%;
+            animation: waveFlow 8s linear infinite;
+            z-index: 3;
+        "></div>
+
+        <!-- Wavy bottom boundary for the curtain transition -->
+        <div style="
+            position: absolute;
+            bottom: -98px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            pointer-events: none;
+            z-index: 5;
+        ">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" style="width: 100%; height: 100%; display: block; fill: #030508;">
+                <path d="M0,0 L1200,0 L1200,60 C900,120 600,0 300,60 L0,30 Z"></path>
+            </svg>
+        </div>
     </div>
 
     <style>
@@ -303,6 +359,14 @@ $currentTitle = $title ?? 'GET Control Panel';
         33% { transform: scale(1.1) rotate(120deg); border-radius: 40% 60% 45% 55% / 40% 45% 55% 60%; }
         66% { transform: scale(0.9) rotate(240deg); border-radius: 55% 45% 60% 40% / 50% 60% 40% 50%; }
         100% { transform: scale(1) rotate(360deg); border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+    }
+    @keyframes waveFlow {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    @keyframes waveFlowReverse {
+        0% { transform: translateX(-50%); }
+        100% { transform: translateX(0); }
     }
     </style>
 
