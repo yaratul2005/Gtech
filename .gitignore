@@ -33,6 +33,7 @@ npm-debug.log*
 # Setup database migrations / diff output
 /Setup/db/*.sql
 !/Setup/db/schema.sql
+/Setup/install/*.lock
 
 # Local distribution source directories
 # Note: Keep /src in git, but do not deploy it to production shared hosting.
