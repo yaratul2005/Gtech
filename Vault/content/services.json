@@ -4,44 +4,51 @@
   "services": [
     {
       "id": "wordpress",
-      "name": "WordPress / Elementor Website",
-      "focus": "Custom themes, Elementor Pro design, mobile speed optimization, security hardening.",
+      "name": "WordPress / Elementor Websites",
+      "description": "High-converting, fully customized corporate and landing page designs built using Elementor Pro on WordPress. We develop bespoke themes, optimize load times to sub-second speeds, secure configurations, and set up drag-and-drop custom modules so your internal marketing teams can manage content.",
+      "focus": "Bespoke Theme & Elementor Custom Widgets, Sub-second Mobile Load Speed Optimizations, Security Hardening & Automated Daily Backups",
       "icon": "wordpress"
     },
     {
       "id": "php",
-      "name": "PHP Custom Website",
-      "focus": "Vanilla PHP 8.x MVC backends, custom SQL database structures, PDO prepared security.",
+      "name": "PHP Custom Websites & Systems",
+      "description": "When standard templates fall short, we build custom applications and MVC backends from scratch using secure, modern PHP (8.x). Optimized for low-cost shared hosting environments, our database architectures use prepared PDO statements to ensure maximum vulnerability protection while executing queries.",
+      "focus": "Custom Database Arch (MySQL/PDO), Secure Admin Dashboards & Middleware Gates, Third-party API & webhook integrations",
       "icon": "code"
     },
     {
       "id": "seo",
-      "name": "SEO and Ranking",
-      "focus": "Technical audits, keywords mapping, Core Web Vitals optimization, organic positioning.",
+      "name": "SEO and Organic Search Ranking",
+      "description": "Move up Google's search result pages. We execute technical audit reviews, fix crawlability constraints, optimize Core Web Vitals, and deploy schema markups. Followed by meticulous keyword targeting, competitor research, and high-quality backlink generation to position your site where prospects look.",
+      "focus": "Comprehensive Keyword Research & Mapping, Technical SEO audit & Schema markups, High-Quality Domain Authority backlinks",
       "icon": "trending-up"
     },
     {
       "id": "marketing",
-      "name": "Digital Marketing [Ads]",
-      "focus": "Performance marketing campaign administration, Google and Meta Ads, audience analytics.",
+      "name": "Digital Marketing & Ads Management",
+      "description": "Stop burning budget on unoptimized ads. We manage performance campaigns on Google Ads, Meta Ads (Facebook/Instagram), and LinkedIn. Our strategies focus on laser-focused audience segmentation, landing page conversion tests, and robust conversion API tracking to ensure positive ROI.",
+      "focus": "Meta Pixels & Conversion API setups, A/B Landing Page split testing, Detailed monthly conversion reports",
       "icon": "megaphone"
     },
     {
       "id": "content",
-      "name": "Content [Canva] Design and 3D Mockups [AI]",
-      "focus": "Reusable Canva kit designs, photorealistic 3D product mockup renders using AI tools.",
+      "name": "Content & 3D AI Product Mockups",
+      "description": "Empowered content creation. We set up easy-to-use Canva templates aligned with your brand style guidelines. Additionally, we use advanced neural rendering pipelines to generate high-fidelity 3D product mockups directly from your flat product photos, providing gorgeous commercial assets.",
+      "focus": "Custom Canva social media template kits, 3D photorealistic product renderings, AI image enhancement & asset prep",
       "icon": "cube"
     },
     {
       "id": "ecommerce",
-      "name": "E-commerce Business Startup",
-      "focus": "Shopify and WooCommerce configurations, payment processors, local shipping setups.",
+      "name": "E-commerce Business Startups",
+      "description": "Launch your storefront with peace of mind. We build and structure comprehensive online stores utilizing WooCommerce or Shopify. From configuring inventory syncing, payment gates (bKash/SSLCommerz/Stripe), automated tax calculations, SMS invoice delivery, to shipping partner integrations.",
+      "focus": "WooCommerce & Shopify configuration, Local & International payment gateways, Order management & SMS notification systems",
       "icon": "shopping-bag"
     },
     {
       "id": "branding",
-      "name": "Business Solutions and Branding",
-      "focus": "Corporate logo systems, stationery designs, brand style guides, Google Workspace configs.",
+      "name": "Business Solutions & Branding",
+      "description": "Establish a solid corporate identity. We engineer modern corporate logos, design stationery assets, write brand style books, and deploy digital workspaces (Google Workspace/Microsoft 365 setup). Our structural solutions streamline your workflow and secure your brand presence.",
+      "focus": "Corporate Logo & Identity systems, Brand Style Book definitions, Professional Google Workspace setup",
       "icon": "shield-check"
     }
   ]

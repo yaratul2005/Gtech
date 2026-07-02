@@ -43,6 +43,40 @@ $router->get('/contact', function() {
     return view('contact', ['title' => 'Contact Us']);
 });
 
+// Admin Panel routes (Setup & Governance layer mapped to /admin)
+$router->get('/admin', function() {
+    \Setup\Auth\AuthMiddleware::redirectToDashboardOrLogin();
+});
+$router->get('/admin/login', [ \Setup\Admin\Controllers\AdminController::class, 'showLoginForm' ]);
+$router->post('/admin/login', [ \Setup\Admin\Controllers\AdminController::class, 'login' ]);
+$router->get('/admin/logout', [ \Setup\Admin\Controllers\AdminController::class, 'logout' ]);
+
+$router->get('/admin/dashboard', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->dashboard();
+});
+$router->get('/admin/leads', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->leads();
+});
+$router->post('/admin/leads/delete', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->deleteLead();
+});
+$router->get('/admin/services', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->services();
+});
+$router->post('/admin/services/update', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->updateService();
+});
+
 // Internal API routes
 $router->post('/api/contact', function() {
     require_once __DIR__ . '/Tunnel/internal/api.php';

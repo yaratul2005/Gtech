@@ -95,6 +95,34 @@ spl_autoload_register(function ($class) {
             return;
         }
     }
+
+    // Check if path starts with Setup/
+    if (strpos($classPath, 'Setup/') === 0) {
+        $parts = explode('/', $classPath);
+        if (isset($parts[1])) {
+            $parts[1] = strtolower($parts[1]); // e.g. Setup/admin
+        }
+        if (isset($parts[2])) {
+            $parts[2] = strtolower($parts[2]); // e.g. Setup/admin/controllers
+        }
+
+        // Check 1: Exact casing (e.g. Setup/admin/controllers/AdminController.php)
+        $file = __DIR__ . '/../../' . implode('/', $parts) . '.php';
+        if (file_exists($file)) {
+            require_once $file;
+            return;
+        }
+
+        // Check 2: Lowercase filename
+        $lastIdx = count($parts) - 1;
+        $originalLast = $parts[$lastIdx];
+        $parts[$lastIdx] = strtolower($originalLast);
+        $file = __DIR__ . '/../../' . implode('/', $parts) . '.php';
+        if (file_exists($file)) {
+            require_once $file;
+            return;
+        }
+    }
 });
 
 // 3. View Helper Function
