@@ -543,7 +543,11 @@ class AdminController
         }
 
         $updated = array_values($updated);
-        file_put_contents($this->pagesFile, json_encode($updated, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        if (file_put_contents($this->pagesFile, json_encode($updated, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) === false) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to write data changes. Check file permissions on pages.json.']);
+            return;
+        }
         $this->triggerSeoUpdate();
 
         echo json_encode(['success' => true, 'message' => 'Page deleted successfully.']);
@@ -643,7 +647,11 @@ class AdminController
         }
 
         $updated = array_values($updated);
-        file_put_contents($this->postsFile, json_encode($updated, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        if (file_put_contents($this->postsFile, json_encode($updated, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) === false) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to write data changes. Check file permissions on posts.json.']);
+            return;
+        }
         $this->triggerSeoUpdate();
 
         echo json_encode(['success' => true, 'message' => 'Blog post deleted successfully.']);
@@ -882,6 +890,221 @@ class AdminController
         } else {
             echo $content;
         }
+    }
+
+    public function updatePage(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $original_slug = trim($_POST['original_slug'] ?? '');
+        $title = trim($_POST['title'] ?? '');
+        $slug = trim($_POST['slug'] ?? '');
+        $meta_desc = trim($_POST['meta_desc'] ?? '');
+        $content = trim($_POST['content'] ?? '');
+
+        if (empty($original_slug) || empty($title) || empty($slug) || empty($content)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'All fields are required.']);
+            return;
+        }
+
+        $pages = [];
+        if (file_exists($this->pagesFile)) {
+            $pages = json_decode((string)file_get_contents($this->pagesFile), true) ?: [];
+        }
+
+        $foundIndex = -1;
+        foreach ($pages as $index => $p) {
+            if ($p['slug'] === $original_slug) {
+                $foundIndex = $index;
+                break;
+            }
+        }
+
+        if ($foundIndex === -1) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Original page not found.']);
+            return;
+        }
+
+        if ($slug !== $original_slug) {
+            foreach ($pages as $p) {
+                if ($p['slug'] === $slug) {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'A page with the new URL slug already exists.']);
+                    return;
+                }
+            }
+        }
+
+        $pages[$foundIndex]['title'] = $title;
+        $pages[$foundIndex]['slug'] = $slug;
+        $pages[$foundIndex]['meta_desc'] = $meta_desc;
+        $pages[$foundIndex]['content'] = $content;
+
+        if (file_put_contents($this->pagesFile, json_encode($pages, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) === false) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to write page changes. Check file permissions.']);
+            return;
+        }
+
+        $this->triggerSeoUpdate();
+
+        echo json_encode(['success' => true, 'message' => 'Page updated successfully!']);
+    }
+
+    public function updatePost(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $original_slug = trim($_POST['original_slug'] ?? '');
+        $title = trim($_POST['title'] ?? '');
+        $slug = trim($_POST['slug'] ?? '');
+        $meta_desc = trim($_POST['meta_desc'] ?? '');
+        $content = trim($_POST['content'] ?? '');
+
+        if (empty($original_slug) || empty($title) || empty($slug) || empty($content)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'All fields are required.']);
+            return;
+        }
+
+        $posts = [];
+        if (file_exists($this->postsFile)) {
+            $posts = json_decode((string)file_get_contents($this->postsFile), true) ?: [];
+        }
+
+        $foundIndex = -1;
+        foreach ($posts as $index => $p) {
+            if ($p['slug'] === $original_slug) {
+                $foundIndex = $index;
+                break;
+            }
+        }
+
+        if ($foundIndex === -1) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Original post not found.']);
+            return;
+        }
+
+        if ($slug !== $original_slug) {
+            foreach ($posts as $p) {
+                if ($p['slug'] === $slug) {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'A blog post with the new URL slug already exists.']);
+                    return;
+                }
+            }
+        }
+
+        $posts[$foundIndex]['title'] = $title;
+        $posts[$foundIndex]['slug'] = $slug;
+        $posts[$foundIndex]['meta_desc'] = $meta_desc;
+        $posts[$foundIndex]['content'] = $content;
+
+        if (file_put_contents($this->postsFile, json_encode($posts, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) === false) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to write blog changes. Check file permissions.']);
+            return;
+        }
+
+        $this->triggerSeoUpdate();
+
+        echo json_encode(['success' => true, 'message' => 'Blog post updated successfully!']);
+    }
+
+    public function updateTeamMember(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $id = trim($_POST['id'] ?? '');
+        $name = trim($_POST['name'] ?? '');
+        $role = trim($_POST['role'] ?? '');
+        $bio = trim($_POST['bio'] ?? '');
+        $skills = trim($_POST['skills'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $theme = trim($_POST['theme'] ?? '');
+
+        if (empty($id) || empty($name) || empty($role) || empty($bio)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'ID, Name, Role, and Bio are required.']);
+            return;
+        }
+
+        $team = [];
+        if (file_exists($this->teamFile)) {
+            $team = json_decode((string)file_get_contents($this->teamFile), true) ?: [];
+        }
+
+        $foundIndex = -1;
+        foreach ($team as $index => $m) {
+            if ($m['id'] === $id) {
+                $foundIndex = $index;
+                break;
+            }
+        }
+
+        if ($foundIndex === -1) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Team member not found.']);
+            return;
+        }
+
+        $imagePath = $team[$foundIndex]['image'];
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $fileTmpPath = $_FILES['image']['tmp_name'];
+            $fileName = $_FILES['image']['name'];
+            $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+            
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+            if (in_array($fileExtension, $allowedExtensions, true)) {
+                $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+                $uploadFileDir = __DIR__ . '/../../../Vault/uploads/';
+                if (!is_dir($uploadFileDir)) {
+                    mkdir($uploadFileDir, 0755, true);
+                }
+                $destPath = $uploadFileDir . $newFileName;
+                
+                if (move_uploaded_file($fileTmpPath, $destPath)) {
+                    $imagePath = '/Vault/uploads/' . $newFileName;
+                }
+            }
+        }
+
+        $team[$foundIndex]['name'] = $name;
+        $team[$foundIndex]['role'] = $role;
+        $team[$foundIndex]['bio'] = $bio;
+        $team[$foundIndex]['skills'] = $skills;
+        $team[$foundIndex]['phone'] = $phone;
+        $team[$foundIndex]['theme'] = $theme;
+        $team[$foundIndex]['image'] = $imagePath;
+
+        if (file_put_contents($this->teamFile, json_encode($team, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) === false) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to write team changes. Check file permissions.']);
+            return;
+        }
+
+        echo json_encode(['success' => true, 'message' => 'Team member updated successfully!']);
     }
 
     private function triggerSeoUpdate(): void

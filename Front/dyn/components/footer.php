@@ -48,6 +48,12 @@ declare(strict_types=1);
                         <li><a href="/team">Our Team</a></li>
                         <li><a href="/blog">Blog Insights</a></li>
                         <li><a href="/p/privacy-policy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col" data-reveal data-delay="300">
+                    <h3 class="footer-title">Others</h3>
+                    <ul class="footer-links">
                         <li><a href="/sitemap.xml" target="_blank">Sitemap XML</a></li>
                         <li><a href="/robots.txt" target="_blank">Robots.txt</a></li>
                     </ul>

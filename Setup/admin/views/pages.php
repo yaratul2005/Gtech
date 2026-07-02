@@ -16,7 +16,7 @@ declare(strict_types=1);
     <!-- Create Dynamic Page form -->
     <div style="grid-column: span 2;">
         <div class="card" style="padding: 25px; border-radius: 16px;">
-            <h3 style="font-size: 1.15rem; font-family: 'Outfit', sans-serif; margin-bottom: 20px; color: var(--color-cyan-pulse);">
+            <h3 style="font-size: 1.15rem; font-family: 'Outfit', sans-serif; margin-bottom: 20px; color: var(--color-cyan-pulse);" id="form-heading">
                 Create Page
             </h3>
 
@@ -25,6 +25,7 @@ declare(strict_types=1);
 
             <form id="page-add-form" action="/admin/pages/create" method="POST">
                 <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
+                <input type="hidden" name="original_slug" id="page-original-slug" value="">
 
                 <div class="form-group">
                     <label class="form-label">Page Title</label>
@@ -47,7 +48,10 @@ declare(strict_types=1);
                     <textarea name="content" id="page-editor" class="form-input" style="min-height: 150px; font-family: monospace; font-size: 0.85rem;" placeholder="Write raw HTML content..."></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-full" id="add-page-submit">Create Page</button>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary btn-full" id="add-page-submit">Create Page</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-page-edit" style="display: none; width: auto; border-color: rgba(255,255,255,0.05); padding: 12px 24px;">Cancel</button>
+                </div>
             </form>
         </div>
     </div>
@@ -76,11 +80,21 @@ declare(strict_types=1);
                                 </div>
                             </div>
                             
-                            <button class="btn btn-secondary btn-sm delete-page-btn" 
-                                    data-slug="<?php echo htmlspecialchars($p['slug']); ?>"
-                                    style="border-color: rgba(239, 68, 68, 0.2); color: #f87171; font-size: 0.8rem; padding: 6px 12px;">
-                                Delete Page
-                            </button>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-secondary btn-sm edit-page-btn" 
+                                        data-title="<?php echo htmlspecialchars($p['title']); ?>"
+                                        data-slug="<?php echo htmlspecialchars($p['slug']); ?>"
+                                        data-meta-desc="<?php echo htmlspecialchars($p['meta_desc']); ?>"
+                                        style="border-color: rgba(59, 130, 246, 0.2); color: var(--color-cyan-pulse); font-size: 0.8rem; padding: 6px 12px; height: auto;">
+                                    Edit
+                                </button>
+                                <button class="btn btn-secondary btn-sm delete-page-btn" 
+                                        data-slug="<?php echo htmlspecialchars($p['slug']); ?>"
+                                        style="border-color: rgba(239, 68, 68, 0.2); color: #f87171; font-size: 0.8rem; padding: 6px 12px; height: auto;">
+                                    Delete
+                                </button>
+                            </div>
+                            <textarea id="raw-content-<?php echo htmlspecialchars($p['slug']); ?>" style="display:none;"><?php echo htmlspecialchars($p['content']); ?></textarea>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -161,6 +175,55 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Create Page';
         }
+    });
+
+    const formHeading = document.getElementById('form-heading');
+    const pageOriginalSlug = document.getElementById('page-original-slug');
+    const cancelEditBtn = document.getElementById('cancel-page-edit');
+
+    // Edit page
+    document.querySelectorAll('.edit-page-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const title = btn.getAttribute('data-title');
+            const slug = btn.getAttribute('data-slug');
+            const metaDesc = btn.getAttribute('data-meta-desc');
+            const rawContentTextarea = document.getElementById(`raw-content-${slug}`);
+            const rawContent = rawContentTextarea ? rawContentTextarea.value : '';
+
+            addForm.title.value = title;
+            addForm.slug.value = slug;
+            addForm.meta_desc.value = metaDesc;
+            if (editorInstance) {
+                editorInstance.setData(rawContent);
+            }
+
+            pageOriginalSlug.value = slug;
+            addForm.action = '/admin/pages/update';
+            formHeading.textContent = 'Edit Page';
+            submitBtn.textContent = 'Update Page';
+            cancelEditBtn.style.display = 'inline-block';
+
+            window.scrollTo({
+                top: addForm.getBoundingClientRect().top + window.scrollY - 100,
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    // Cancel edit
+    cancelEditBtn.addEventListener('click', () => {
+        addForm.reset();
+        if (editorInstance) {
+            editorInstance.setData('');
+        }
+        pageOriginalSlug.value = '';
+        addForm.action = '/admin/pages/create';
+        formHeading.textContent = 'Create Page';
+        submitBtn.textContent = 'Create Page';
+        cancelEditBtn.style.display = 'none';
+        
+        successAlert.style.display = 'none';
+        errorAlert.style.display = 'none';
     });
 
     // Delete page

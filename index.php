@@ -130,6 +130,11 @@ $router->post('/admin/pages/delete', function() {
     $c = new \Setup\Admin\Controllers\AdminController();
     $c->deletePage();
 });
+$router->post('/admin/pages/update', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->updatePage();
+});
 $router->get('/admin/posts', function() {
     \Setup\Auth\AuthMiddleware::verify();
     $c = new \Setup\Admin\Controllers\AdminController();
@@ -144,6 +149,11 @@ $router->post('/admin/posts/delete', function() {
     \Setup\Auth\AuthMiddleware::verify();
     $c = new \Setup\Admin\Controllers\AdminController();
     $c->deletePost();
+});
+$router->post('/admin/posts/update', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->updatePost();
 });
 
 $router->get('/admin/team', function() {
@@ -160,6 +170,11 @@ $router->post('/admin/team/delete', function() {
     \Setup\Auth\AuthMiddleware::verify();
     $c = new \Setup\Admin\Controllers\AdminController();
     $c->deleteTeamMember();
+});
+$router->post('/admin/team/update', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->updateTeamMember();
 });
 
 // Dynamic frontend routes

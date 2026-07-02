@@ -16,7 +16,7 @@ declare(strict_types=1);
     <!-- Create Team Member form -->
     <div style="grid-column: span 1;">
         <div class="card" style="padding: 25px; border-radius: 16px;">
-            <h3 style="font-size: 1.15rem; font-family: 'Outfit', sans-serif; margin-bottom: 20px; color: var(--color-cyan-pulse);">
+            <h3 style="font-size: 1.15rem; font-family: 'Outfit', sans-serif; margin-bottom: 20px; color: var(--color-cyan-pulse);" id="form-heading">
                 Add Team Member
             </h3>
 
@@ -25,6 +25,7 @@ declare(strict_types=1);
 
             <form id="team-add-form" action="/admin/team/create" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
+                <input type="hidden" name="id" id="member-id" value="">
 
                 <div class="form-group">
                     <label class="form-label">Full Name</label>
@@ -56,7 +57,7 @@ declare(strict_types=1);
                 <div class="form-group">
                     <label class="form-label">Upload Profile Photo</label>
                     <input type="file" name="image" class="form-input" accept="image/*" style="border: 1px dashed var(--glass-border); padding: 12px; cursor: pointer;">
-                    <p style="font-size: 0.7rem; color: var(--color-mist); margin-top: 4px;">Allowed formats: WebP, PNG, JPG, GIF.</p>
+                    <p style="font-size: 0.7rem; color: var(--color-mist); margin-top: 4px;">Allowed formats: WebP, PNG, JPG, GIF. (Leave empty to keep existing on Edit)</p>
                 </div>
 
                 <div class="form-group" style="margin-bottom: 25px;">
@@ -64,7 +65,10 @@ declare(strict_types=1);
                     <textarea name="bio" class="form-input" style="min-height: 80px;" placeholder="Describe qualifications and career achievements..." required></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-full" id="add-team-submit">Add Member</button>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary btn-full" id="add-team-submit">Add Member</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-team-edit" style="display: none; width: auto; border-color: rgba(255,255,255,0.05); padding: 12px 24px;">Cancel</button>
+                </div>
             </form>
         </div>
     </div>
@@ -116,11 +120,24 @@ declare(strict_types=1);
                                 </div>
                             </div>
                             
-                            <button class="btn btn-secondary btn-sm delete-team-btn" 
-                                    data-id="<?php echo htmlspecialchars($m['id']); ?>"
-                                    style="border-color: rgba(239, 68, 68, 0.2); color: #f87171; font-size: 0.8rem; padding: 6px 12px; height: fit-content; flex-shrink: 0;">
-                                Remove
-                            </button>
+                            <div style="display: flex; gap: 8px; flex-shrink: 0; align-items: center;">
+                                <button class="btn btn-secondary btn-sm edit-team-btn" 
+                                        data-id="<?php echo htmlspecialchars($m['id']); ?>"
+                                        data-name="<?php echo htmlspecialchars($m['name']); ?>"
+                                        data-role="<?php echo htmlspecialchars($m['role']); ?>"
+                                        data-skills="<?php echo htmlspecialchars($m['skills'] ?? ''); ?>"
+                                        data-phone="<?php echo htmlspecialchars($m['phone'] ?? ''); ?>"
+                                        data-theme="<?php echo htmlspecialchars($m['theme'] ?? ''); ?>"
+                                        data-bio="<?php echo htmlspecialchars($m['bio']); ?>"
+                                        style="border-color: rgba(59, 130, 246, 0.2); color: var(--color-cyan-pulse); font-size: 0.8rem; padding: 6px 12px; height: fit-content;">
+                                    Edit
+                                </button>
+                                <button class="btn btn-secondary btn-sm delete-team-btn" 
+                                        data-id="<?php echo htmlspecialchars($m['id']); ?>"
+                                        style="border-color: rgba(239, 68, 68, 0.2); color: #f87171; font-size: 0.8rem; padding: 6px 12px; height: fit-content;">
+                                    Remove
+                                </button>
+                            </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -170,6 +187,54 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Add Member';
         }
+    });
+
+    const formHeading = document.getElementById('form-heading');
+    const memberIdInput = document.getElementById('member-id');
+    const cancelEditBtn = document.getElementById('cancel-team-edit');
+
+    // Edit team member
+    document.querySelectorAll('.edit-team-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-id');
+            const name = btn.getAttribute('data-name');
+            const role = btn.getAttribute('data-role');
+            const skills = btn.getAttribute('data-skills');
+            const phone = btn.getAttribute('data-phone');
+            const theme = btn.getAttribute('data-theme');
+            const bio = btn.getAttribute('data-bio');
+
+            addForm.name.value = name;
+            addForm.role.value = role;
+            addForm.skills.value = skills;
+            addForm.phone.value = phone;
+            addForm.theme.value = theme;
+            addForm.bio.value = bio;
+
+            memberIdInput.value = id;
+            addForm.action = '/admin/team/update';
+            formHeading.textContent = 'Edit Team Member';
+            submitBtn.textContent = 'Update Member';
+            cancelEditBtn.style.display = 'inline-block';
+
+            window.scrollTo({
+                top: addForm.getBoundingClientRect().top + window.scrollY - 100,
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    // Cancel edit
+    cancelEditBtn.addEventListener('click', () => {
+        addForm.reset();
+        memberIdInput.value = '';
+        addForm.action = '/admin/team/create';
+        formHeading.textContent = 'Add Team Member';
+        submitBtn.textContent = 'Add Member';
+        cancelEditBtn.style.display = 'none';
+        
+        successAlert.style.display = 'none';
+        errorAlert.style.display = 'none';
     });
 
     // Delete team member
