@@ -33,6 +33,14 @@ class Router
             $uri = substr($uri, 0, $position);
         }
 
+        // Clean index.php prefix if present (fallback for hosts with mod_rewrite disabled)
+        if (str_starts_with($uri, '/index.php')) {
+            $uri = substr($uri, 10);
+            if (empty($uri)) {
+                $uri = '/';
+            }
+        }
+
         // Clean URI trail slashes
         if ($uri !== '/' && str_ends_with($uri, '/')) {
             $uri = rtrim($uri, '/');
