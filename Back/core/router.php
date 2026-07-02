@@ -34,7 +34,7 @@ class Router
         }
 
         // Clean index.php prefix if present (fallback for hosts with mod_rewrite disabled)
-        if (str_starts_with($uri, '/index.php')) {
+        if (strpos($uri, '/index.php') === 0) {
             $uri = substr($uri, 10);
             if (empty($uri)) {
                 $uri = '/';
@@ -42,7 +42,7 @@ class Router
         }
 
         // Clean URI trail slashes
-        if ($uri !== '/' && str_ends_with($uri, '/')) {
+        if ($uri !== '/' && substr($uri, -1) === '/') {
             $uri = rtrim($uri, '/');
         }
 
