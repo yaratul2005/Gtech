@@ -1,0 +1,16 @@
+{
+  "name": "great-endured-technology",
+  "version": "1.0.0",
+  "description": "Great Endured Technology - Agency Website",
+  "main": "index.php",
+  "scripts": {
+    "build": "node Setup/scripts/build.js",
+    "dev": "node Setup/scripts/build.js --watch"
+  },
+  "keywords": [],
+  "author": "Antigravity",
+  "license": "ISC",
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

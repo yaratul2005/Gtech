@@ -1,0 +1,48 @@
+{
+  "agencyName": "Great Endured Technology",
+  "domain": "greatentech.com",
+  "services": [
+    {
+      "id": "wordpress",
+      "name": "WordPress / Elementor Website",
+      "focus": "Custom themes, Elementor Pro design, mobile speed optimization, security hardening.",
+      "icon": "wordpress"
+    },
+    {
+      "id": "php",
+      "name": "PHP Custom Website",
+      "focus": "Vanilla PHP 8.x MVC backends, custom SQL database structures, PDO prepared security.",
+      "icon": "code"
+    },
+    {
+      "id": "seo",
+      "name": "SEO and Ranking",
+      "focus": "Technical audits, keywords mapping, Core Web Vitals optimization, organic positioning.",
+      "icon": "trending-up"
+    },
+    {
+      "id": "marketing",
+      "name": "Digital Marketing [Ads]",
+      "focus": "Performance marketing campaign administration, Google and Meta Ads, audience analytics.",
+      "icon": "megaphone"
+    },
+    {
+      "id": "content",
+      "name": "Content [Canva] Design and 3D Mockups [AI]",
+      "focus": "Reusable Canva kit designs, photorealistic 3D product mockup renders using AI tools.",
+      "icon": "cube"
+    },
+    {
+      "id": "ecommerce",
+      "name": "E-commerce Business Startup",
+      "focus": "Shopify and WooCommerce configurations, payment processors, local shipping setups.",
+      "icon": "shopping-bag"
+    },
+    {
+      "id": "branding",
+      "name": "Business Solutions and Branding",
+      "focus": "Corporate logo systems, stationery designs, brand style guides, Google Workspace configs.",
+      "icon": "shield-check"
+    }
+  ]
+}

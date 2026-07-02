@@ -1,0 +1,21 @@
+# Disable directory browsing
+Options -Indexes
+
+# Prevent folder listing of core directories
+RedirectMatch 404 ^/(Back|Vault/content|Vault/backups|Vault/cache|Setup/db|Setup/install|Setup/scripts|Setup/ruleset)
+
+# Enable rewrite engine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Handle Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>

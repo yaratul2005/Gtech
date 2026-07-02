@@ -1,0 +1,91 @@
+/**
+ * Great Endured Technology — Footer Component
+ */
+
+.footer {
+  background-color: var(--color-ink);
+  border-top: 1px solid var(--glass-border);
+  padding-top: 80px;
+  padding-bottom: 40px;
+  position: relative;
+  z-index: 10;
+}
+
+.footer-grid {
+  grid-template-columns: 1fr;
+  margin-bottom: 50px;
+}
+
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+.footer-brand p {
+  color: var(--color-mist);
+  margin-top: 20px;
+  max-width: 320px;
+}
+
+.footer-title {
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-white);
+}
+
+.footer-links {
+  list-style: none;
+}
+
+.footer-links li {
+  margin-bottom: 12px;
+}
+
+.footer-links a {
+  color: var(--color-fog);
+  font-size: 0.95rem;
+}
+
+.footer-links a:hover {
+  color: var(--color-cyan-pulse);
+  padding-left: 4px;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 30px;
+  font-size: 0.85rem;
+  color: var(--color-mist);
+}
+
+.footer-socials {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.footer-social-link {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-fog);
+}
+
+.footer-social-link:hover {
+  color: var(--color-white);
+  background-color: var(--color-blue-core);
+  border-color: var(--color-blue-glow);
+}
+
+.footer-social-link svg {
+  width: 18px;
+  height: 18px;
+}

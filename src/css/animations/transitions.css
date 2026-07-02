@@ -1,0 +1,63 @@
+/**
+ * Great Endured Technology — Transitions & Entrance Reveals
+ * Spec from Resource.md (Section 5.2)
+ */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity var(--transition-slow), transform var(--transition-slow);
+  will-change: opacity, transform;
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered Delay Utilities (CSS only) */
+[data-reveal][data-delay="100"] {
+  transition-delay: 100ms;
+}
+
+[data-reveal][data-delay="200"] {
+  transition-delay: 200ms;
+}
+
+[data-reveal][data-delay="300"] {
+  transition-delay: 300ms;
+}
+
+[data-reveal][data-delay="400"] {
+  transition-delay: 400ms;
+}
+
+[data-reveal][data-delay="500"] {
+  transition-delay: 500ms;
+}
+
+[data-reveal][data-delay="600"] {
+  transition-delay: 600ms;
+}
+
+[data-reveal][data-delay="700"] {
+  transition-delay: 700ms;
+}
+
+[data-reveal][data-delay="800"] {
+  transition-delay: 800ms;
+}
+
+/* Glow Pulses */
+@keyframes pulse-cyan {
+  0%, 100% {
+    box-shadow: 0 0 24px rgba(0, 212, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(0, 212, 255, 0.6);
+  }
+}
+
+.pulse-glow-cyan {
+  animation: pulse-cyan 3s infinite ease-in-out;
+}
