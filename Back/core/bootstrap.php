@@ -11,51 +11,94 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 1. Helper function to load env variables from .env file
-function loadEnv(string $path): void
+// 1. Config Encryption & Secure Settings Engine
+class ConfigEncryptor
 {
-    if (!file_exists($path)) {
-        return;
+    private static ?string $key = null;
+
+    private static function getKey(): string
+    {
+        if (self::$key !== null) {
+            return self::$key;
+        }
+
+        $keyFile = __DIR__ . '/../../Vault/content/.key';
+        if (!file_exists($keyFile)) {
+            // Generate a secure random key
+            $randomKey = bin2hex(random_bytes(16));
+            file_put_contents($keyFile, $randomKey);
+        }
+        self::$key = trim((string)file_get_contents($keyFile));
+        return self::$key;
     }
 
-    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        // Skip comments
-        if (strpos(trim($line), '#') === 0) {
-            continue;
+    public static function encrypt(string $value): string
+    {
+        if ($value === '') return '';
+        $key = self::getKey();
+        $iv = random_bytes(16);
+        $encrypted = openssl_encrypt($value, 'AES-128-CBC', $key, 0, $iv);
+        return base64_encode($iv . $encrypted);
+    }
+
+    public static function decrypt(string $value): string
+    {
+        if ($value === '') return '';
+        $data = base64_decode($value, true);
+        if ($data === false || strlen($data) < 16) {
+            return $value; // Fallback to raw if not encrypted
         }
-
-        // Split by first equals sign
-        $parts = explode('=', $line, 2);
-        if (count($parts) === 2) {
-            $key = trim($parts[0]);
-            $val = trim($parts[1]);
-
-            // Strip quotes if any
-            if (preg_match('/^"(.+)"$/', $val, $matches) || preg_match("/^'(.+)'$/", $val, $matches)) {
-                $val = $matches[1];
-            }
-
-            $_ENV[$key] = $val;
-            putenv("{$key}={$val}");
-        }
+        $key = self::getKey();
+        $iv = substr($data, 0, 16);
+        $encrypted = substr($data, 16);
+        $decrypted = openssl_decrypt($encrypted, 'AES-128-CBC', $key, 0, $iv);
+        return $decrypted !== false ? $decrypted : $value;
     }
 }
 
-// Load env configurations
-loadEnv(__DIR__ . '/../../.env');
+// 2. Load and Bootstrap Configurations
+$defaultConfigs = [
+    'APP_ENV' => 'production',
+    'APP_NAME' => 'Great Endured Technology',
+    'APP_URL' => 'https://greatentech.com',
+    'APP_DESC' => 'Great Endured Technology is a premier digital agency providing enterprise WordPress development, custom PHP solutions, SEO, digital marketing, Canva content, and 3D mockups.',
+    'APP_KEYWORDS' => 'Great Endured Technology, digital agency, WordPress development, Elementor, PHP website, SEO ranking, Digital marketing, Canva design, 3D mockups, ecommerce startup',
+    'DB_HOST' => 'localhost',
+    'DB_PORT' => '3306',
+    'DB_NAME' => 'great_endured_db',
+    'DB_USER' => 'root',
+    'DB_PASS' => '',
+    'ADMIN_USER' => 'admin',
+    'ADMIN_PASS' => 'admin1234',
+    'SMTP_HOST' => '',
+    'SMTP_PORT' => '587',
+    'SMTP_USER' => '',
+    'SMTP_PASS' => '',
+    'SMTP_FROM' => 'contact@greatentech.com',
+    'SMTP_FROM_NAME' => 'Great Endured Technology',
+    'HEADER_CODE' => '',
+    'FOOTER_CODE' => ''
+];
 
-// Merge dynamic settings from settings.json (CMS settings override env settings)
 $settingsFile = __DIR__ . '/../../Vault/content/settings.json';
+$settingsData = [];
 if (file_exists($settingsFile)) {
-    $settingsData = json_decode((string)file_get_contents($settingsFile), true);
-    if (is_array($settingsData)) {
-        foreach ($settingsData as $key => $val) {
-            $envKey = strtoupper($key);
-            $_ENV[$envKey] = $val;
-            putenv("{$envKey}={$val}");
-        }
+    $settingsData = json_decode((string)file_get_contents($settingsFile), true) ?: [];
+}
+
+// Populate system configurations (Decrypter triggers for sensitive fields)
+$sensitiveKeys = ['db_pass', 'admin_pass', 'smtp_pass'];
+foreach ($defaultConfigs as $key => $defaultVal) {
+    $jsonKey = strtolower($key);
+    $val = $settingsData[$jsonKey] ?? $defaultVal;
+
+    // Decrypt if it is a sensitive field
+    if (in_array($jsonKey, $sensitiveKeys, true) && !empty($val)) {
+        $val = ConfigEncryptor::decrypt((string)$val);
     }
+
+    $_ENV[$key] = $val;
+    putenv("{$key}={$val}");
 }
 
 // Set PHP execution parameters (Resource.md: Shared Hosting limits check)

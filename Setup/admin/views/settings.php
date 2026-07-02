@@ -87,9 +87,53 @@ $s = $settings;
                 </div>
         </div>
 
-        <!-- Section 3: Custom Code Injection -->
+        <!-- Section 3: Database & Admin Access Configuration -->
         <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 25px; margin-top: 25px;">
-            <h4 style="margin: 0 0 15px 0; color: var(--color-white); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em;">3. Code Injection & Script Integrations</h4>
+            <div class="grid grid-2" style="gap: 25px;">
+                <!-- DB config -->
+                <div>
+                    <h4 style="margin: 0 0 15px 0; color: var(--color-white); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em;">3. Database connection parameters</h4>
+                    <div class="form-group">
+                        <label class="form-label">Database Host</label>
+                        <input type="text" name="db_host" class="form-input" value="<?php echo htmlspecialchars($s['db_host'] ?? 'localhost'); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Database Port</label>
+                        <input type="text" name="db_port" class="form-input" value="<?php echo htmlspecialchars($s['db_port'] ?? '3306'); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Database Name</label>
+                        <input type="text" name="db_name" class="form-input" value="<?php echo htmlspecialchars($s['db_name'] ?? 'great_endured_db'); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Database User</label>
+                        <input type="text" name="db_user" class="form-input" value="<?php echo htmlspecialchars($s['db_user'] ?? 'root'); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Database Password</label>
+                        <input type="password" name="db_pass" class="form-input" placeholder="•••••••••••• (leave empty to keep unchanged)">
+                    </div>
+                </div>
+
+                <!-- Admin credentials -->
+                <div>
+                    <h4 style="margin: 0 0 15px 0; color: var(--color-white); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em;">4. Admin Authentication Credentials</h4>
+                    <div class="form-group">
+                        <label class="form-label">Admin Username</label>
+                        <input type="text" name="admin_user" class="form-input" value="<?php echo htmlspecialchars($s['admin_user'] ?? 'admin'); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Admin Password</label>
+                        <input type="password" name="admin_pass" class="form-input" placeholder="•••••••••••• (leave empty to keep unchanged)">
+                        <p style="font-size: 0.75rem; color: var(--color-mist); margin-top: 5px;">Leave empty to keep your active password.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Custom Code Injection -->
+        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 25px; margin-top: 25px;">
+            <h4 style="margin: 0 0 15px 0; color: var(--color-white); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em;">5. Code Injection & Script Integrations</h4>
             <div class="grid grid-2" style="gap: 25px;">
                 <div class="form-group">
                     <label class="form-label">Custom Header Code (in &lt;head&gt;)</label>

@@ -218,6 +218,36 @@ class AdminController
             return;
         }
 
+        // Load existing settings
+        $existing = [];
+        if (file_exists($this->settingsFile)) {
+            $existing = json_decode((string)file_get_contents($this->settingsFile), true) ?: [];
+        }
+
+        // Process SMTP pass (encrypt if changed)
+        $smtpPass = trim($_POST['smtp_pass'] ?? '');
+        if ($smtpPass === '') {
+            $smtpPass = $existing['smtp_pass'] ?? '';
+        } else {
+            $smtpPass = \ConfigEncryptor::encrypt($smtpPass);
+        }
+
+        // Process DB pass (encrypt if changed)
+        $dbPass = trim($_POST['db_pass'] ?? '');
+        if ($dbPass === '') {
+            $dbPass = $existing['db_pass'] ?? '';
+        } else {
+            $dbPass = \ConfigEncryptor::encrypt($dbPass);
+        }
+
+        // Process Admin pass (encrypt if changed)
+        $adminPass = trim($_POST['admin_pass'] ?? '');
+        if ($adminPass === '') {
+            $adminPass = $existing['admin_pass'] ?? '';
+        } else {
+            $adminPass = \ConfigEncryptor::encrypt($adminPass);
+        }
+
         $config = [
             'app_name' => trim($_POST['app_name'] ?? 'Great Endured Technology'),
             'app_url' => trim($_POST['app_url'] ?? 'https://greatentech.com'),
@@ -226,16 +256,23 @@ class AdminController
             'smtp_host' => trim($_POST['smtp_host'] ?? ''),
             'smtp_port' => trim($_POST['smtp_port'] ?? '587'),
             'smtp_user' => trim($_POST['smtp_user'] ?? ''),
-            'smtp_pass' => trim($_POST['smtp_pass'] ?? ''),
+            'smtp_pass' => $smtpPass,
             'smtp_from' => trim($_POST['smtp_from'] ?? 'contact@greatentech.com'),
             'smtp_from_name' => trim($_POST['smtp_from_name'] ?? 'Great Endured Technology'),
+            'db_host' => trim($_POST['db_host'] ?? 'localhost'),
+            'db_port' => trim($_POST['db_port'] ?? '3306'),
+            'db_name' => trim($_POST['db_name'] ?? 'great_endured_db'),
+            'db_user' => trim($_POST['db_user'] ?? 'root'),
+            'db_pass' => $dbPass,
+            'admin_user' => trim($_POST['admin_user'] ?? 'admin'),
+            'admin_pass' => $adminPass,
             'header_code' => $_POST['header_code'] ?? '',
             'footer_code' => $_POST['footer_code'] ?? ''
         ];
 
         file_put_contents($this->settingsFile, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-        echo json_encode(['success' => true, 'message' => 'Site and SMTP configuration saved successfully!']);
+        echo json_encode(['success' => true, 'message' => 'Site, SMTP, Database, and Admin credentials updated successfully!']);
     }
 
     public function portfolio(): void

@@ -27,9 +27,6 @@ if (!is_writable($cacheDir)) {
     $warnings[] = "Cache folder is not writable. Set `/Vault/cache` permissions to 0755 in cPanel File Manager.";
 }
 
-if (!file_exists(__DIR__ . '/../../../.env')) {
-    $warnings[] = "`.env` file not found. Copy `.env.example` to `.env` and configure credentials.";
-}
 ?>
 
 <div class="card" style="text-align: center; padding: 40px;">
