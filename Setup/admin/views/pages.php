@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 <div class="grid grid-3" style="align-items: start; gap: 30px;">
     <!-- Create Dynamic Page form -->
-    <div style="grid-column: span 1;">
+    <div style="grid-column: span 2;">
         <div class="card" style="padding: 25px; border-radius: 16px;">
             <h3 style="font-size: 1.15rem; font-family: 'Outfit', sans-serif; margin-bottom: 20px; color: var(--color-cyan-pulse);">
                 Create Page
@@ -53,7 +53,7 @@ declare(strict_types=1);
     </div>
 
     <!-- Active pages list -->
-    <div style="grid-column: span 2;">
+    <div style="grid-column: span 1;">
         <div class="card" style="padding: 25px; border-radius: 16px;">
             <h3 style="font-size: 1.15rem; font-family: 'Outfit', sans-serif; margin-bottom: 20px;">
                 Dynamic Pages
@@ -93,7 +93,7 @@ declare(strict_types=1);
 <style>
 /* Adjust CKEditor styles for dark mode alignment */
 .ck-editor__editable {
-    min-height: 250px;
+    min-height: 450px;
     background-color: #0d1117 !important;
     color: #c9d1d9 !important;
     border-color: rgba(255, 255, 255, 0.08) !important;
