@@ -5,11 +5,43 @@
  */
 
 declare(strict_types=1);
+
+// Diagnostics Check (Shared hosting environment validation)
+$warnings = [];
+
+if (version_compare(phpversion(), '8.0.0', '<')) {
+    $warnings[] = "PHP Version is " . phpversion() . ". PHP 8.0.0 or higher is required. Please change your PHP version in cPanel.";
+}
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    $warnings[] = "PHP session is not active. Check session settings.";
+} else {
+    $_SESSION['sys_sess_test'] = true;
+    if (empty($_SESSION['sys_sess_test'])) {
+        $warnings[] = "PHP sessions are not persisting. Verify session save path with your host.";
+    }
+}
+
+$cacheDir = __DIR__ . '/../../../Vault/cache';
+if (!is_writable($cacheDir)) {
+    $warnings[] = "Cache folder is not writable. Set `/Vault/cache` permissions to 0755 in cPanel File Manager.";
+}
+
+if (!file_exists(__DIR__ . '/../../../.env')) {
+    $warnings[] = "`.env` file not found. Copy `.env.example` to `.env` and configure credentials.";
+}
 ?>
 
 <div class="card" style="text-align: center; padding: 40px;">
     <h2 style="margin-bottom: 10px;">Admin Access</h2>
     <p style="color: var(--color-mist); font-size: 0.9rem; margin-bottom: 30px;">Authenticate to access site control settings.</p>
+
+    <!-- Diagnostics Warnings -->
+    <?php foreach ($warnings as $warn): ?>
+        <div class="form-alert form-alert-error" style="display: block; font-size: 0.8rem; padding: 10px; margin-bottom: 15px; text-align: left; background-color: rgba(239,68,68,0.05);">
+            ⚠️ <?php echo htmlspecialchars($warn); ?>
+        </div>
+    <?php endforeach; ?>
 
     <?php if (isset($error)): ?>
         <div class="form-alert form-alert-error" style="display: block; margin-bottom: 20px;">
