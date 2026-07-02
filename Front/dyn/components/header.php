@@ -206,38 +206,72 @@ function isActive(string $path, string $currentUri): string
             }
         };
 
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(hideLoader, 150);
+        // Failsafe: force hide loader after 1.5 seconds max
+        setTimeout(hideLoader, 1500);
 
-            document.body.addEventListener('click', e => {
-                const link = e.target.closest('a');
-                if (link && link.href) {
-                    const url = new URL(link.href, window.location.href);
-                    const isInternal = url.origin === window.location.origin;
-                    const isSpecial = link.getAttribute('target') === '_blank' || 
-                                      link.getAttribute('href').startsWith('#') || 
-                                      link.getAttribute('href').startsWith('javascript:') ||
-                                      e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;
-                    
-                    if (isInternal && !isSpecial) {
-                        e.preventDefault();
-                        const overlay = document.getElementById('fluid-wipe-overlay');
-                        if (overlay) {
-                            overlay.style.transition = 'none';
-                            overlay.style.transform = 'translateY(-100%)';
-                            overlay.offsetHeight;
-                            overlay.style.transition = 'transform 0.6s cubic-bezier(0.85, 0, 0.15, 1)';
-                            overlay.style.transform = 'translateY(0)';
-                            overlay.style.pointerEvents = 'all';
-                            setTimeout(() => {
-                                window.location.href = link.href;
-                            }, 550);
-                        } else {
+        // Immediate check if document is already ready
+        if (document.readyState === 'interactive' || document.readyState === 'complete') {
+            setTimeout(hideLoader, 150);
+        } else {
+            window.addEventListener('DOMContentLoaded', () => {
+                setTimeout(hideLoader, 150);
+            });
+        }
+
+        // Intercept clicks on document (safe to register in head)
+        document.addEventListener('click', e => {
+            const link = e.target.closest('a');
+            if (!link) return;
+            
+            const href = link.getAttribute('href');
+            if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+                return;
+            }
+
+            try {
+                const url = new URL(link.href, window.location.href);
+                const isInternal = url.origin === window.location.origin;
+                const isSpecial = link.getAttribute('target') === '_blank' || 
+                                  e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;
+                
+                if (isInternal && !isSpecial) {
+                    e.preventDefault();
+                    const overlay = document.getElementById('fluid-wipe-overlay');
+                    if (overlay) {
+                        overlay.style.transition = 'none';
+                        overlay.style.transform = 'translateY(-100%)';
+                        overlay.offsetHeight;
+                        overlay.style.transition = 'transform 0.6s cubic-bezier(0.85, 0, 0.15, 1)';
+                        overlay.style.transform = 'translateY(0)';
+                        overlay.style.pointerEvents = 'all';
+                        setTimeout(() => {
                             window.location.href = link.href;
-                        }
+                        }, 550);
+                    } else {
+                        window.location.href = link.href;
                     }
                 }
-            });
+            } catch (err) {
+                // Fallback to normal navigation if URL parsing fails
+            }
+        });
+
+        // Trigger on form submits to show loading
+        document.addEventListener('submit', e => {
+            const form = e.target.closest('form');
+            if (!form) return;
+            const action = form.getAttribute('action') || '';
+            if (!action.includes('delete') && !action.includes('update')) {
+                const overlay = document.getElementById('fluid-wipe-overlay');
+                if (overlay) {
+                    overlay.style.transition = 'none';
+                    overlay.style.transform = 'translateY(-100%)';
+                    overlay.offsetHeight;
+                    overlay.style.transition = 'transform 0.6s cubic-bezier(0.85, 0, 0.15, 1)';
+                    overlay.style.transform = 'translateY(0)';
+                    overlay.style.pointerEvents = 'all';
+                }
+            }
         });
 
         window.addEventListener('pageshow', (event) => {
