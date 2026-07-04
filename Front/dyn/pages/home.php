@@ -69,9 +69,72 @@ if (!function_exists('getServiceIconHtml')) {
         <p class="hero-desc" data-reveal data-delay="400">
             A premium technology agency providing elite development, custom applications, branding solutions, and marketing strategies for forward-thinking brands.
         </p>
-        <div class="hero-ctas" data-reveal data-delay="600">
-            <a href="/services" class="btn btn-primary">Explore Services</a>
-            <a href="/contact" class="btn btn-secondary">Get Free Proposal</a>
+        <div class="hero-ctas-container" data-reveal data-delay="600" style="margin-top: 35px; display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; width: 100%; max-width: 680px;">
+                <a href="/services" class="btn btn-secondary hero-explore-btn" style="
+                    height: 54px; 
+                    display: inline-flex; 
+                    align-items: center; 
+                    margin: 0; 
+                    padding: 0 30px; 
+                    border: 1px solid rgba(255,255,255,0.06); 
+                    background: rgba(255,255,255,0.02);
+                    border-radius: 12px;
+                    font-size: 0.95rem;
+                ">Explore Services</a>
+                
+                <form id="hero-lead-form" action="/contact/submit" method="POST" style="
+                    display: flex; 
+                    align-items: center; 
+                    gap: 10px; 
+                    background: rgba(9, 13, 22, 0.4); 
+                    border: 1px solid var(--glass-border); 
+                    padding: 6px; 
+                    border-radius: 12px; 
+                    flex-grow: 1; 
+                    max-width: 450px; 
+                    backdrop-filter: blur(15px); 
+                    -webkit-backdrop-filter: blur(15px);
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                ">
+                    <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
+                    <input type="hidden" name="name" value="Quick Hero Lead">
+                    <input type="hidden" name="service" value="General Inquiry (Hero)">
+                    <input type="hidden" name="message" value="Quick inquiry submitted directly from the homepage hero email form.">
+                    
+                    <input type="email" name="email" placeholder="Enter your email address" required style="
+                        flex-grow: 1; 
+                        background: transparent; 
+                        border: none; 
+                        outline: none; 
+                        padding: 10px 15px; 
+                        color: var(--color-white); 
+                        font-size: 0.9rem;
+                    ">
+                    
+                    <button type="submit" class="btn btn-primary" id="hero-submit-btn" style="
+                        height: 42px; 
+                        padding: 0 22px; 
+                        font-size: 0.88rem; 
+                        display: inline-flex; 
+                        align-items: center; 
+                        margin: 0; 
+                        white-space: nowrap;
+                        background: linear-gradient(135deg, var(--color-blue-core) 0%, var(--color-blue-glow) 100%);
+                        border-radius: 8px;
+                        box-shadow: var(--glow-blue);
+                        font-weight: 600;
+                    ">Enquire a Service</button>
+                </form>
+            </div>
+            <div id="hero-lead-message" style="
+                font-size: 0.85rem; 
+                font-family: monospace; 
+                margin-top: 5px; 
+                display: none; 
+                transition: all 0.3s ease;
+            "></div>
         </div>
     </div>
 </section>
@@ -448,6 +511,22 @@ if (!function_exists('getServiceIconHtml')) {
     border-color: var(--color-cyan-pulse);
     box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
 }
+
+/* Hero Lead Form Styles */
+#hero-lead-form:focus-within {
+    border-color: rgba(0, 212, 255, 0.4) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 212, 255, 0.15) !important;
+}
+@media (max-width: 580px) {
+    .hero-explore-btn {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+    #hero-lead-form {
+        max-width: none !important;
+        width: 100% !important;
+    }
+}
 </style>
 
 <script>
@@ -558,6 +637,56 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleButtons();
             startAutoplay();
         }, 500);
+    }
+
+    // AJAX Hero Lead Submission
+    const heroForm = document.getElementById('hero-lead-form');
+    const heroMessage = document.getElementById('hero-lead-message');
+    const heroSubmitBtn = document.getElementById('hero-submit-btn');
+
+    if (heroForm && heroMessage && heroSubmitBtn) {
+        heroForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            heroMessage.style.display = 'none';
+            heroSubmitBtn.disabled = true;
+            heroSubmitBtn.textContent = 'Submitting...';
+
+            const formData = new FormData(heroForm);
+
+            try {
+                const response = await fetch(heroForm.action, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    heroMessage.textContent = '✓ Inquiry submitted successfully!';
+                    heroMessage.style.color = '#10b981';
+                    heroMessage.style.display = 'block';
+                    heroForm.reset();
+                    // Auto-hide success message after 4s
+                    setTimeout(() => {
+                        heroMessage.style.opacity = '0';
+                        setTimeout(() => {
+                            heroMessage.style.display = 'none';
+                            heroMessage.style.opacity = '1';
+                        }, 300);
+                    }, 4000);
+                } else {
+                    throw new Error(data.message || 'Inquiry submission failed.');
+                }
+            } catch (err) {
+                heroMessage.textContent = '✕ ' + err.message;
+                heroMessage.style.color = '#f87171';
+                heroMessage.style.display = 'block';
+            } finally {
+                heroSubmitBtn.disabled = false;
+                heroSubmitBtn.textContent = 'Enquire a Service';
+            }
+        });
     }
 });
 </script>
