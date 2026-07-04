@@ -79,26 +79,17 @@ class ContactController
 
     private function sendNotificationEmail(string $name, string $email, string $service, string $message): bool
     {
-        $to = getenv('SMTP_FROM') ?: 'contact@greatentech.com';
         $subject = "New Agency Lead: {$name} - {$service}";
-        
-        $body = "You have received a new inquiry from your website contact form:\n\n";
-        $body .= "Name: {$name}\n";
-        $body .= "Email: {$email}\n";
-        $body .= "Service: {$service}\n\n";
-        $body .= "Message:\n{$message}\n";
+        $to = $_ENV['SMTP_FROM'] ?? 'contact@greatentech.com';
 
-        $headers = "From: {$to}\r\n";
-        $headers .= "Reply-To: {$email}\r\n";
-        $headers .= "X-Mailer: PHP/" . phpversion();
+        $body = "<p>You have received a new lead inquiry from the website contact form:</p>";
+        $body .= "<table style='width: 100%; border: 1px solid rgba(255,255,255,0.05); border-collapse: collapse; margin-top: 15px;'>";
+        $body .= "<tr><td style='padding: 10px; border: 1px solid rgba(255,255,255,0.05); font-weight: bold; width: 120px;'>Name:</td><td style='padding: 10px; border: 1px solid rgba(255,255,255,0.05);'>" . htmlspecialchars($name) . "</td></tr>";
+        $body .= "<tr><td style='padding: 10px; border: 1px solid rgba(255,255,255,0.05); font-weight: bold;'>Email:</td><td style='padding: 10px; border: 1px solid rgba(255,255,255,0.05);'><a href='mailto:" . htmlspecialchars($email) . "' style='color: #00d4ff;'>" . htmlspecialchars($email) . "</a></td></tr>";
+        $body .= "<tr><td style='padding: 10px; border: 1px solid rgba(255,255,255,0.05); font-weight: bold;'>Service:</td><td style='padding: 10px; border: 1px solid rgba(255,255,255,0.05);'>" . htmlspecialchars($service) . "</td></tr>";
+        $body .= "<tr><td style='padding: 10px; border: 1px solid rgba(255,255,255,0.05); font-weight: bold; vertical-align: top;'>Message:</td><td style='padding: 10px; border: 1px solid rgba(255,255,255,0.05);'>" . nl2br(htmlspecialchars($message)) . "</td></tr>";
+        $body .= "</table>";
 
-        // Check if SMTP details are defined in env to send via external mailer (Resource.md Section 3)
-        // For shared hosting, standard mail() with proper headers is the most robust default
-        try {
-            return mail($to, $subject, $body, $headers);
-        } catch (\Exception $e) {
-            error_log("Failed to send mail: " . $e->getMessage());
-            return false;
-        }
+        return \Back\Services\EmailService::send($to, $subject, $body, "New Contact Lead");
     }
 }

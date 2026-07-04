@@ -70,6 +70,16 @@ $router->post('/admin/leads/delete', function() {
     $c = new \Setup\Admin\Controllers\AdminController();
     $c->deleteLead();
 });
+$router->get('/admin/emails', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->emails();
+});
+$router->post('/admin/emails/send', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->sendEmail();
+});
 $router->get('/admin/services', function() {
     \Setup\Auth\AuthMiddleware::verify();
     $c = new \Setup\Admin\Controllers\AdminController();
@@ -104,6 +114,11 @@ $router->post('/admin/portfolio/delete', function() {
     \Setup\Auth\AuthMiddleware::verify();
     $c = new \Setup\Admin\Controllers\AdminController();
     $c->deletePortfolioItem();
+});
+$router->post('/admin/portfolio/update', function() {
+    \Setup\Auth\AuthMiddleware::verify();
+    $c = new \Setup\Admin\Controllers\AdminController();
+    $c->updatePortfolioItem();
 });
 $router->get('/admin/database', function() {
     \Setup\Auth\AuthMiddleware::verify();

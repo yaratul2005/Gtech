@@ -105,6 +105,45 @@ class AdminController
         ]);
     }
 
+    public function emails(): void
+    {
+        $leads = $this->getLeads();
+        $this->renderView('emails', [
+            'title' => 'Email Broadcast',
+            'leads' => array_reverse($leads)
+        ]);
+    }
+
+    public function sendEmail(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!\Back\Middleware\CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $to = trim($_POST['to'] ?? '');
+        $subject = trim($_POST['subject'] ?? '');
+        $body = trim($_POST['body'] ?? '');
+
+        if (empty($to) || empty($subject) || empty($body)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Recipient email, subject, and email body content are required.']);
+            return;
+        }
+
+        $sent = \Back\Services\EmailService::send($to, $subject, $body, "Broadcast Message");
+
+        if ($sent) {
+            echo json_encode(['success' => true, 'message' => 'Email sent successfully via SMTP/Mail service!']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to send email. Check SMTP settings configuration.']);
+        }
+    }
+
     public function deleteLead(): void
     {
         header('Content-Type: application/json');
@@ -370,6 +409,58 @@ class AdminController
         file_put_contents($this->portfolioFile, json_encode($updated, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         echo json_encode(['success' => true, 'message' => 'Portfolio item deleted successfully.']);
+    }
+
+    public function updatePortfolioItem(): void
+    {
+        header('Content-Type: application/json');
+
+        if (!\Back\Middleware\CSRF::verify()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'CSRF verification failed.']);
+            return;
+        }
+
+        $id = $_POST['id'] ?? '';
+        $title = trim($_POST['title'] ?? '');
+        $category = trim($_POST['category'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $theme = trim($_POST['theme'] ?? '');
+        $icon = trim($_POST['icon'] ?? 'globe');
+
+        if (empty($id) || empty($title) || empty($category) || empty($description)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'All details are required to update case study.']);
+            return;
+        }
+
+        $portfolio = [];
+        if (file_exists($this->portfolioFile)) {
+            $portfolio = json_decode((string)file_get_contents($this->portfolioFile), true) ?: [];
+        }
+
+        $found = false;
+        foreach ($portfolio as &$item) {
+            if ($item['id'] === $id) {
+                $item['title'] = $title;
+                $item['category'] = $category;
+                $item['description'] = $description;
+                $item['theme'] = $theme;
+                $item['icon'] = $icon;
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Portfolio case study not found.']);
+            return;
+        }
+
+        file_put_contents($this->portfolioFile, json_encode($portfolio, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        echo json_encode(['success' => true, 'message' => 'Portfolio case study updated successfully!']);
     }
 
     public function database(): void
