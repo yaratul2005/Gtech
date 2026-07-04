@@ -127,6 +127,27 @@ if (!function_exists('getServiceIconHtml')) {
             ">Explore Services</a>
         </div>
     </div>
+
+<!-- Success Modal for Lead Collection -->
+<div id="lead-success-modal" class="hud-modal-overlay" style="display: none;">
+    <div class="hud-modal-content">
+        <span class="hud-modal-bracket hud-modal-tl"></span>
+        <span class="hud-modal-bracket hud-modal-tr"></span>
+        <span class="hud-modal-bracket hud-modal-bl"></span>
+        <span class="hud-modal-bracket hud-modal-br"></span>
+        
+        <div class="hud-modal-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        
+        <h3 class="hud-modal-title">Inquiry Registered</h3>
+        <p class="hud-modal-text">Thank you for contacting Great Endured Technology! Your request has been logged successfully. The page will reload shortly.</p>
+        
+        <div class="hud-modal-loader-bar">
+            <div class="hud-modal-loader-progress"></div>
+        </div>
+    </div>
+</div>
 </section>
 
 <!-- Services Preview Section (Horizontal Slider) -->
@@ -547,6 +568,106 @@ if (!function_exists('getServiceIconHtml')) {
         width: 100% !important;
     }
 }
+
+/* Success Modal Overlay & Box styling */
+.hud-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(9, 13, 22, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+.hud-modal-overlay.show {
+    opacity: 1;
+}
+.hud-modal-content {
+    position: relative;
+    background: linear-gradient(135deg, rgba(17, 22, 34, 0.96) 0%, rgba(9, 13, 22, 0.99) 100%);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 18px;
+    padding: 40px 30px;
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 35px rgba(0, 212, 255, 0.12);
+    transform: scale(0.9);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hud-modal-overlay.show .hud-modal-content {
+    transform: scale(1);
+}
+.hud-modal-bracket {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-color: var(--color-cyan-pulse);
+    border-style: solid;
+}
+.hud-modal-tl { top: 15px; left: 15px; border-width: 2px 0 0 2px; }
+.hud-modal-tr { top: 15px; right: 15px; border-width: 2px 2px 0 0; }
+.hud-modal-bl { bottom: 15px; left: 15px; border-width: 0 0 2px 2px; }
+.hud-modal-br { bottom: 15px; right: 15px; border-width: 0 2px 2px 0; }
+
+.hud-modal-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(16, 185, 129, 0.08);
+    border: 2px solid #10b981;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 22px auto;
+    color: #10b981;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+}
+.hud-modal-icon svg {
+    width: 32px;
+    height: 32px;
+}
+.hud-modal-title {
+    font-size: 1.35rem;
+    color: var(--color-white);
+    font-weight: 750;
+    margin-bottom: 12px;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.01em;
+}
+.hud-modal-text {
+    font-size: 0.9rem;
+    color: var(--color-fog);
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+.hud-modal-loader-bar {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.hud-modal-loader-progress {
+    height: 100%;
+    width: 0%;
+    background: var(--color-cyan-pulse);
+    box-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+}
+.hud-modal-overlay.show .hud-modal-loader-progress {
+    animation: hud-progress-fill 2s linear forwards;
+}
+@keyframes hud-progress-fill {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
 </style>
 
 <script>
@@ -683,18 +804,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    heroMessage.textContent = '✓ Inquiry submitted successfully!';
-                    heroMessage.style.color = '#10b981';
-                    heroMessage.style.display = 'block';
                     heroForm.reset();
-                    // Auto-hide success message after 4s
+                    
+                    // Show success modal overlay
+                    const successModal = document.getElementById('lead-success-modal');
+                    if (successModal) {
+                        successModal.style.display = 'flex';
+                        successModal.offsetHeight; // trigger layout reflow
+                        successModal.classList.add('show');
+                    }
+                    
+                    // Refresh the page automatically after 2 seconds
                     setTimeout(() => {
-                        heroMessage.style.opacity = '0';
-                        setTimeout(() => {
-                            heroMessage.style.display = 'none';
-                            heroMessage.style.opacity = '1';
-                        }, 300);
-                    }, 4000);
+                        location.reload();
+                    }, 2000);
                 } else {
                     throw new Error(data.message || 'Inquiry submission failed.');
                 }
