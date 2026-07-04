@@ -20,6 +20,7 @@ function getServiceIconHtml(string $icon): string
         'megaphone' => '/Vault/assets/ads.png',
         'cube' => '/Vault/assets/3D.png',
         'shopping-bag' => '/Vault/assets/woo.png',
+        'cloudflare' => '/Vault/assets/flare.png',
     ];
 
     if (isset($pngMap[$icon])) {
@@ -74,6 +75,28 @@ function getServiceIconHtml(string $icon): string
         <div class="grid grid-2" style="margin-top: 50px;">
             <?php foreach ($services as $index => $s): ?>
                 <div class="card" data-reveal data-delay="<?php echo ($index % 2) * 100; ?>">
+                    <!-- Google Search JSON-LD Structured Data for Service -->
+                    <script type="application/ld+json">
+                    {
+                      "@context": "https://schema.org",
+                      "@type": "Service",
+                      "name": "<?php echo htmlspecialchars($s['name']); ?>",
+                      "description": "<?php echo htmlspecialchars($s['description']); ?>",
+                      "provider": {
+                        "@type": "LocalBusiness",
+                        "name": "Great Endured Technology",
+                        "image": "https://greatentech.com/Front/static/img/logo.png",
+                        "priceRange": "$$",
+                        "address": {
+                          "@type": "PostalAddress",
+                          "addressLocality": "Dhaka",
+                          "addressCountry": "BD"
+                        }
+                      },
+                      "areaServed": "Worldwide",
+                      "serviceType": "IT & Web Development Services"
+                    }
+                    </script>
                     <?php echo getServiceIconHtml($s['icon'] ?? ''); ?>
                     <h3 class="card-title"><?php echo htmlspecialchars($s['name']); ?></h3>
                     <p class="card-desc"><?php echo htmlspecialchars($s['description']); ?></p>

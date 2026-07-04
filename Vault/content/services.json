@@ -50,6 +50,13 @@
       "description": "Establish a solid corporate identity. We engineer modern corporate logos, design stationery assets, write brand style books, and deploy digital workspaces (Google Workspace/Microsoft 365 setup). Our structural solutions streamline your workflow and secure your brand presence.",
       "focus": "Corporate Logo & Identity systems, Brand Style Book definitions, Professional Google Workspace setup",
       "icon": "shield-check"
+    },
+    {
+      "id": "cloudflare",
+      "name": "Cloudflare Security & DNS",
+      "description": "Complete DNS management, SSL configuration, DDoS shielding, edge caching, and server IP masking. We align and secure your website with Cloudflare to maximize speed and protection against malicious bots.",
+      "focus": "Automated SSL & DNS routing setups, Advanced WAF & DDoS defense shielding, Edge caching & global CDN performance",
+      "icon": "cloudflare"
     }
   ]
 }
