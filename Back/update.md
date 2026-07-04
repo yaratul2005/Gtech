@@ -7,6 +7,8 @@
 - Integrated a clean 2-column layout (Left: giant title & WYSIWYG Canvas; Right: Publish box & meta-widgets) resembling classic blogging engines.
 - Excluded admin sidebar navigation menu and headers when `$hide_sidebar` is active in `layout.php`.
 - Added sent email outbox logging to `Vault/content/emails.json`.
+- Migrated CKEditor 5 CDN load path to jsDelivr for global uptime caching and ISP bypass safety.
+- Implemented premium, dark-themed styling fallbacks directly on textarea tags for offline/blocked editor script loads.
 
 ## [2026-07-04] v1.1.0
 **Agent:** Antigravity (Gemini)
