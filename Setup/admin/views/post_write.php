@@ -41,7 +41,7 @@ $isEdit = isset($post) && !empty($post);
                     <div style="padding: 12px 20px; background: #161b22; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 0.85rem; text-transform: uppercase; font-weight: 600; color: var(--color-mist); letter-spacing: 0.05em;">Writing Canvas</span>
                     </div>
-                    <textarea name="content" id="post-editor"><?php echo $isEdit ? htmlspecialchars($post['content']) : ''; ?></textarea>
+                    <textarea name="content" id="post-editor" style="width: 100%; min-height: 450px; background-color: #0d1117; color: #c9d1d9; border: none; padding: 20px; font-family: inherit; font-size: 1rem; line-height: 1.6; outline: none; box-sizing: border-box; display: block; resize: vertical;"><?php echo $isEdit ? htmlspecialchars($post['content']) : ''; ?></textarea>
                 </div>
 
                 <!-- Collapsible Meta Box: SEO settings -->
@@ -98,7 +98,7 @@ $isEdit = isset($post) && !empty($post);
     </form>
 </div>
 
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/editor.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@ckeditor/ckeditor5-build-classic@39.0.2/build/ckeditor.js"></script>
 <style>
 /* Adjust CKEditor styles for dark mode alignment */
 .ck-editor__editable {
