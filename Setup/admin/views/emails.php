@@ -1,144 +1,48 @@
 <?php
 /**
- * Great Endured Technology — Admin Email Composer View
+ * Great Endured Technology — Admin Emails List Template
  * Governed by RBP (AGENTS.md)
  */
 declare(strict_types=1);
 ?>
-
-<div style="margin-bottom: 30px;">
-    <h2 style="font-size: 1.8rem; margin-bottom: 5px; font-family: 'Outfit', sans-serif;">Email Outbox & Broadcast</h2>
-    <p style="color: var(--color-mist); font-size: 0.95rem; margin: 0;">Compose and send branded HTML emails directly to leads or custom recipients.</p>
+<div style="margin-bottom: 30px;" class="flex-between">
+    <div>
+        <h2 style="font-size: 1.8rem; margin-bottom: 5px; font-family: 'Outfit', sans-serif;">Email Outbox & Broadcast</h2>
+        <p style="color: var(--color-mist); font-size: 0.95rem; margin: 0;">View broadcast history or compose a new email broadcast to leads.</p>
+    </div>
+    <a href="/admin/emails?action=write" class="btn btn-primary" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-color: #10b981; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; height: 38px; line-height: 20px;">
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width: 16px; height: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+        Compose Broadcast
+    </a>
 </div>
 
-<div class="card" style="padding: 30px; border-radius: 16px; position: relative;">
-    <h3 style="font-size: 1.15rem; font-family: 'Outfit', sans-serif; margin-bottom: 25px; color: var(--color-cyan-pulse);">
-        Compose Outbox Message
+<div class="card" style="padding: 30px; border-radius: 16px;">
+    <h3 style="font-size: 1.15rem; font-family: 'Outfit', sans-serif; margin-bottom: 20px;">
+        Outbox Log History
     </h3>
 
-    <div class="form-alert form-alert-success" id="send-success" style="display: none; padding: 15px; margin-bottom: 20px;"></div>
-    <div class="form-alert form-alert-error" id="send-error" style="display: none; padding: 15px; margin-bottom: 20px;"></div>
-
-    <form id="email-compose-form" action="/admin/emails/send" method="POST">
-        <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
-
-        <div class="form-group">
-            <label class="form-label">Select Recipient from Leads</label>
-            <select id="recipient-select" class="form-input" style="background-color: var(--color-ink); margin-bottom: 10px;">
-                <option value="">-- Choose from captured leads --</option>
-                <?php foreach ($leads as $lead): ?>
-                    <option value="<?php echo htmlspecialchars($lead['email']); ?>">
-                        <?php echo htmlspecialchars($lead['name']); ?> (<?php echo htmlspecialchars($lead['email']); ?>)
-                    </option>
-                <?php endforeach; ?>
-            </select>
+    <?php if (empty($sentEmails)): ?>
+        <p style="color: var(--color-mist); text-align: center; padding: 40px 0; margin: 0;">No broadcast messages sent yet.</p>
+    <?php else: ?>
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <?php foreach ($sentEmails as $email): ?>
+                <div class="flex-between" 
+                     style="background: rgba(255,255,255,0.01); padding: 15px 20px; border-radius: 10px; border: 1px solid var(--glass-border); align-items: center; gap: 20px;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="color: var(--color-cyan-pulse);">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width: 22px; height: 22px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/></svg>
+                        </div>
+                        <div>
+                            <h4 style="margin: 0; color: var(--color-white); font-size: 1rem;"><?php echo htmlspecialchars($email['subject']); ?></h4>
+                            <span style="font-size: 0.85rem; color: var(--color-mist);">To: <strong style="color: var(--color-cyan-pulse);"><?php echo htmlspecialchars($email['to']); ?></strong></span>
+                        </div>
+                    </div>
+                    
+                    <div style="font-size: 0.8rem; color: var(--color-mist); font-weight: 500;">
+                        <?php echo htmlspecialchars($email['date']); ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
-
-        <div class="form-group">
-            <label class="form-label">Recipient Email Address</label>
-            <input type="email" name="to" id="recipient-email" class="form-input" placeholder="e.g. client@company.com" required>
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">Subject</label>
-            <input type="text" name="subject" class="form-input" placeholder="e.g. Follow up on your project inquiry" required>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 25px;">
-            <label class="form-label">Email Content (HTML Supported)</label>
-            <textarea name="body" id="email-editor" class="form-input" style="min-height: 250px; font-family: monospace; font-size: 0.85rem;" placeholder="Write your message here..."></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-primary" id="send-btn" style="min-width: 150px;">
-            Send Email
-        </button>
-    </form>
+    <?php endif; ?>
 </div>
-
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/editor.js"></script>
-<style>
-.ck-editor__editable {
-    min-height: 350px;
-    background-color: #0d1117 !important;
-    color: #c9d1d9 !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
-}
-.ck-toolbar {
-    background-color: #161b22 !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
-}
-.ck-toolbar * {
-    color: #c9d1d9 !important;
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('email-compose-form');
-    const recipientSelect = document.getElementById('recipient-select');
-    const recipientEmail = document.getElementById('recipient-email');
-    const successAlert = document.getElementById('send-success');
-    const errorAlert = document.getElementById('send-error');
-    const sendBtn = document.getElementById('send-btn');
-
-    let editorInstance;
-    if (typeof ClassicEditor !== 'undefined') {
-        ClassicEditor
-            .create(document.querySelector('#email-editor'))
-            .then(editor => {
-                editorInstance = editor;
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }
-
-    // Update custom input when choosing from dropdown
-    recipientSelect.addEventListener('change', () => {
-        if (recipientSelect.value !== '') {
-            recipientEmail.value = recipientSelect.value;
-        }
-    });
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        if (editorInstance) {
-            editorInstance.updateSourceElement();
-        }
-
-        successAlert.style.display = 'none';
-        errorAlert.style.display = 'none';
-        sendBtn.disabled = true;
-        sendBtn.textContent = 'Sending email...';
-
-        const formData = new FormData(form);
-
-        try {
-            const response = await fetch(form.action, {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                successAlert.textContent = data.message;
-                successAlert.style.display = 'block';
-                form.reset();
-                if (editorInstance) {
-                    editorInstance.setData('');
-                }
-            } else {
-                throw new Error(data.message || 'Failed to deliver email.');
-            }
-        } catch (err) {
-            errorAlert.textContent = err.message;
-            errorAlert.style.display = 'block';
-        } finally {
-            sendBtn.disabled = false;
-            sendBtn.textContent = 'Send Email';
-        }
-    });
-});
-</script>

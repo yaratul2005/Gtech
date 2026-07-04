@@ -457,6 +457,7 @@ $currentTitle = $title ?? 'GET Control Panel';
     </script>
 
     <!-- Admin Header -->
+    <?php if (!($hide_sidebar ?? false)): ?>
     <header class="admin-nav">
         <div class="container flex-between">
             <a href="/admin/dashboard" class="logo" style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.35rem; display: flex; align-items: center; gap: 8px;">
@@ -471,10 +472,12 @@ $currentTitle = $title ?? 'GET Control Panel';
             <?php endif; ?>
         </div>
     </header>
+    <?php endif; ?>
 
     <!-- Content Shell -->
-    <div class="admin-layout">
+    <div class="admin-layout" style="<?php echo ($hide_sidebar ?? false) ? 'max-width: 100%; width: 100%; padding: 0; min-height: 100vh; gap: 0;' : ''; ?>">
         <?php if ($isLoggedIn): ?>
+            <?php if (!($hide_sidebar ?? false)): ?>
             <!-- Left Navigation Sidebar -->
             <aside class="admin-sidebar">
                 <div class="admin-sidebar-card">
@@ -533,9 +536,10 @@ $currentTitle = $title ?? 'GET Control Panel';
                     </a>
                 </div>
             </aside>
+            <?php endif; ?>
             
             <!-- Content Panel -->
-            <main class="admin-main">
+            <main class="admin-main" style="<?php echo ($hide_sidebar ?? false) ? 'padding: 0; width: 100%;' : ''; ?>">
                 <?php echo $content; ?>
             </main>
         <?php else: ?>

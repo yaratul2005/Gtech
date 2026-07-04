@@ -107,10 +107,27 @@ class AdminController
 
     public function emails(): void
     {
+        $logFile = __DIR__ . '/../../../Vault/content/emails.json';
+        $sentEmails = [];
+        if (file_exists($logFile)) {
+            $sentEmails = json_decode((string)file_get_contents($logFile), true) ?: [];
+        }
+
+        if (isset($_GET['action']) && $_GET['action'] === 'write') {
+            $leads = $this->getLeads();
+            $this->renderView('email_write', [
+                'title' => 'Compose Broadcast',
+                'leads' => array_reverse($leads),
+                'hide_sidebar' => true
+            ]);
+            return;
+        }
+
         $leads = $this->getLeads();
         $this->renderView('emails', [
             'title' => 'Email Broadcast',
-            'leads' => array_reverse($leads)
+            'leads' => array_reverse($leads),
+            'sentEmails' => array_reverse($sentEmails)
         ]);
     }
 
@@ -137,6 +154,18 @@ class AdminController
         $sent = \Back\Services\EmailService::send($to, $subject, $body, "Broadcast Message");
 
         if ($sent) {
+            $logFile = __DIR__ . '/../../../Vault/content/emails.json';
+            $logs = [];
+            if (file_exists($logFile)) {
+                $logs = json_decode((string)file_get_contents($logFile), true) ?: [];
+            }
+            $logs[] = [
+                'date' => date('Y-m-d H:i:s'),
+                'to' => $to,
+                'subject' => $subject
+            ];
+            file_put_contents($logFile, json_encode($logs, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
             echo json_encode(['success' => true, 'message' => 'Email sent successfully via SMTP/Mail service!']);
         } else {
             http_response_code(500);
@@ -319,6 +348,29 @@ class AdminController
 
     public function portfolio(): void
     {
+        if (isset($_GET['action']) && $_GET['action'] === 'write') {
+            $id = $_GET['id'] ?? '';
+            $item = null;
+            if (!empty($id)) {
+                $portfolio = [];
+                if (file_exists($this->portfolioFile)) {
+                    $portfolio = json_decode((string)file_get_contents($this->portfolioFile), true) ?: [];
+                }
+                foreach ($portfolio as $p) {
+                    if ($p['id'] === $id) {
+                        $item = $p;
+                        break;
+                    }
+                }
+            }
+            $this->renderView('portfolio_write', [
+                'title' => $item ? 'Edit Case Study' : 'Add Case Study',
+                'item' => $item,
+                'hide_sidebar' => true
+            ]);
+            return;
+        }
+
         $portfolio = [];
         if (file_exists($this->portfolioFile)) {
             $portfolio = json_decode((string)file_get_contents($this->portfolioFile), true) ?: [];
@@ -540,6 +592,29 @@ class AdminController
 
     public function pages(): void
     {
+        if (isset($_GET['action']) && $_GET['action'] === 'write') {
+            $slug = $_GET['slug'] ?? '';
+            $page = null;
+            if (!empty($slug)) {
+                $pages = [];
+                if (file_exists($this->pagesFile)) {
+                    $pages = json_decode((string)file_get_contents($this->pagesFile), true) ?: [];
+                }
+                foreach ($pages as $p) {
+                    if ($p['slug'] === $slug) {
+                        $page = $p;
+                        break;
+                    }
+                }
+            }
+            $this->renderView('page_write', [
+                'title' => $page ? 'Edit Page' : 'Create Page',
+                'page' => $page,
+                'hide_sidebar' => true
+            ]);
+            return;
+        }
+
         $pages = [];
         if (file_exists($this->pagesFile)) {
             $pages = json_decode((string)file_get_contents($this->pagesFile), true) ?: [];
@@ -646,6 +721,29 @@ class AdminController
 
     public function posts(): void
     {
+        if (isset($_GET['action']) && $_GET['action'] === 'write') {
+            $slug = $_GET['slug'] ?? '';
+            $post = null;
+            if (!empty($slug)) {
+                $posts = [];
+                if (file_exists($this->postsFile)) {
+                    $posts = json_decode((string)file_get_contents($this->postsFile), true) ?: [];
+                }
+                foreach ($posts as $p) {
+                    if ($p['slug'] === $slug) {
+                        $post = $p;
+                        break;
+                    }
+                }
+            }
+            $this->renderView('post_write', [
+                'title' => $post ? 'Edit Post' : 'Add New Post',
+                'post' => $post,
+                'hide_sidebar' => true
+            ]);
+            return;
+        }
+
         $posts = [];
         if (file_exists($this->postsFile)) {
             $posts = json_decode((string)file_get_contents($this->postsFile), true) ?: [];
@@ -834,6 +932,29 @@ class AdminController
 
     public function team(): void
     {
+        if (isset($_GET['action']) && $_GET['action'] === 'write') {
+            $id = $_GET['id'] ?? '';
+            $member = null;
+            if (!empty($id)) {
+                $team = [];
+                if (file_exists($this->teamFile)) {
+                    $team = json_decode((string)file_get_contents($this->teamFile), true) ?: [];
+                }
+                foreach ($team as $t) {
+                    if ($t['id'] === $id) {
+                        $member = $t;
+                        break;
+                    }
+                }
+            }
+            $this->renderView('team_write', [
+                'title' => $member ? 'Edit Team Member' : 'Add Team Member',
+                'member' => $member,
+                'hide_sidebar' => true
+            ]);
+            return;
+        }
+
         $team = [];
         if (file_exists($this->teamFile)) {
             $team = json_decode((string)file_get_contents($this->teamFile), true) ?: [];
