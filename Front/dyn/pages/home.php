@@ -71,7 +71,7 @@ if (!function_exists('getServiceIconHtml')) {
         </p>
         <div class="hero-ctas-container" data-reveal data-delay="600" style="margin-top: 35px; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%;">
             <!-- Form centered on top -->
-            <form id="hero-lead-form" action="/contact/submit" method="POST" style="
+            <form id="hero-lead-form" data-no-wipe="true" action="/contact/submit" method="POST" style="
                 display: flex; 
                 align-items: center; 
                 gap: 10px; 

@@ -260,6 +260,9 @@ function isActive(string $path, string $currentUri): string
         document.addEventListener('submit', e => {
             const form = e.target.closest('form');
             if (!form) return;
+            if (form.hasAttribute('data-no-wipe') || form.classList.contains('no-wipe')) {
+                return;
+            }
             const action = form.getAttribute('action') || '';
             if (!action.includes('delete') && !action.includes('update')) {
                 const overlay = document.getElementById('fluid-wipe-overlay');
