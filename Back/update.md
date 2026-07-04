@@ -1,3 +1,13 @@
+## [2026-07-04] v1.2.0
+**Agent:** Antigravity (Gemini)
+**Scope:** Back → Admin views, layout scaffolding, and dedicated CMS workspaces
+
+### Added
+- Created dedicated editor workspaces: `post_write.php`, `page_write.php`, `portfolio_write.php`, `team_write.php`, and `email_write.php`.
+- Integrated a clean 2-column layout (Left: giant title & WYSIWYG Canvas; Right: Publish box & meta-widgets) resembling classic blogging engines.
+- Excluded admin sidebar navigation menu and headers when `$hide_sidebar` is active in `layout.php`.
+- Added sent email outbox logging to `Vault/content/emails.json`.
+
 ## [2026-07-04] v1.1.0
 **Agent:** Antigravity (Gemini)
 **Scope:** Back → Services, Controllers, and SMTP Mail Integration
