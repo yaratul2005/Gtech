@@ -1,3 +1,15 @@
+## [2026-07-04] v1.1.0
+**Agent:** Antigravity (Gemini)
+**Scope:** Back → Services, Controllers, and SMTP Mail Integration
+
+### Added
+- Created `EmailService.php` providing branded HTML layouts and custom SMTP socket + mail() fallback transport channels.
+- Added `/admin/emails` broadcast composer views, rich CKEditor fields, and CSRF-protected AJAX submit endpoints.
+- Integrated fully editable workspaces and case study update controllers in `/admin/portfolio`.
+
+### Changed
+- Refactored `ContactController.php` to leverage SMTP-supported notifications via `EmailService`.
+
 ## [2026-07-02] v1.0.0
 **Agent:** Antigravity (Gemini)
 **Scope:** Back → Core bootstrapping, routers, controllers, and middlewares
