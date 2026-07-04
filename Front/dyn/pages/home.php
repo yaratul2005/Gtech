@@ -92,7 +92,19 @@ if (!function_exists('getServiceIconHtml')) {
             
             <div class="services-slider-track">
                 <?php foreach ($services as $index => $s): ?>
-                    <div class="card slider-card">
+                    <div class="card slider-card hud-card" data-index="<?php echo $index; ?>">
+                        <!-- HUD Corner bracket elements -->
+                        <span class="hud-bracket hud-tl"></span>
+                        <span class="hud-bracket hud-tr"></span>
+                        <span class="hud-bracket hud-bl"></span>
+                        <span class="hud-bracket hud-br"></span>
+                        
+                        <!-- Pulsing Tech Status indicator -->
+                        <div class="hud-status">
+                            <span class="hud-status-dot"></span>
+                            <span class="hud-status-text">SYS ACTIVE // NODE_<?php echo sprintf("%02d", $index + 1); ?></span>
+                        </div>
+
                         <!-- Google Search JSON-LD Structured Data for Service -->
                         <script type="application/ld+json">
                         {
@@ -116,10 +128,20 @@ if (!function_exists('getServiceIconHtml')) {
                         }
                         </script>
                         
-                        <?php echo getServiceIconHtml($s['icon'] ?? ''); ?>
-                        <h3 class="card-title"><?php echo htmlspecialchars($s['name']); ?></h3>
-                        <p class="card-desc"><?php echo htmlspecialchars($s['description']); ?></p>
-                        <a href="/contact?service=<?php echo urlencode($s['id']); ?>" class="card-link">Inquire Service <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></a>
+                        <div class="hud-icon-container">
+                            <div class="hud-icon-glow"></div>
+                            <?php echo getServiceIconHtml($s['icon'] ?? ''); ?>
+                        </div>
+                        
+                        <h3 class="card-title hud-title"><?php echo htmlspecialchars($s['name']); ?></h3>
+                        <p class="card-desc hud-desc"><?php echo htmlspecialchars($s['description']); ?></p>
+                        
+                        <div style="flex-grow: 1;"></div>
+                        
+                        <a href="/contact?service=<?php echo urlencode($s['id']); ?>" class="hud-cta">
+                            <span>Inquire Service</span>
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width: 14px; height: 14px; transition: transform 0.3s ease;"><path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                        </a>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -127,6 +149,13 @@ if (!function_exists('getServiceIconHtml')) {
             <button class="slider-nav-btn next-btn" aria-label="Next Slide">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
             </button>
+
+            <!-- Slider Dots Indicators -->
+            <div class="slider-dots-container">
+                <?php foreach ($services as $index => $s): ?>
+                    <button class="slider-dot <?php echo $index === 0 ? 'active' : ''; ?>" data-slide="<?php echo $index; ?>" aria-label="Go to slide <?php echo $index + 1; ?>"></button>
+                <?php endforeach; ?>
+            </div>
         </div>
         
         <div class="text-center" style="margin-top: 40px;" data-reveal>
@@ -168,17 +197,159 @@ if (!function_exists('getServiceIconHtml')) {
 </section>
 
 <style>
-.card:hover .service-png-icon {
-    transform: scale(1.18) rotate(3deg);
-    filter: drop-shadow(0 8px 16px rgba(0, 212, 255, 0.4)) !important;
+/* HUD Premium Card Redesign */
+.hud-card {
+    position: relative;
+    background: linear-gradient(135deg, rgba(17, 22, 34, 0.4) 0%, rgba(9, 13, 22, 0.6) 100%) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.04) !important;
+    border-radius: 16px;
+    padding: 35px 30px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    overflow: hidden;
 }
-.card:hover .service-png-wrapper {
-    border-color: rgba(0, 212, 255, 0.4) !important;
-    background: rgba(0, 212, 255, 0.04) !important;
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.15);
+.hud-card:hover {
+    transform: translateY(-8px) !important;
+    border-color: rgba(0, 212, 255, 0.25) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 212, 255, 0.08) !important;
 }
 
-/* Slider Scaffolding */
+/* Corner HUD Brackets */
+.hud-bracket {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-color: rgba(0, 212, 255, 0.15);
+    border-style: solid;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0.5;
+}
+.hud-tl { top: 15px; left: 15px; border-width: 2px 0 0 2px; }
+.hud-tr { top: 15px; right: 15px; border-width: 2px 2px 0 0; }
+.hud-bl { bottom: 15px; left: 15px; border-width: 0 0 2px 2px; }
+.hud-br { bottom: 15px; right: 15px; border-width: 0 2px 2px 0; }
+
+.hud-card:hover .hud-bracket {
+    opacity: 1;
+    border-color: var(--color-cyan-pulse);
+}
+.hud-card:hover .hud-tl { top: 10px; left: 10px; }
+.hud-card:hover .hud-tr { top: 10px; right: 10px; }
+.hud-card:hover .hud-bl { bottom: 10px; left: 10px; }
+.hud-card:hover .hud-br { bottom: 10px; right: 10px; }
+
+/* Status Dot Indicator */
+.hud-status {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.62rem;
+    font-family: monospace;
+    color: var(--color-mist);
+    letter-spacing: 0.1em;
+}
+.hud-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+    animation: hud-status-pulse 2s infinite;
+}
+.hud-status-text {
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+@keyframes hud-status-pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+    70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Floating Icon Orbs */
+.hud-icon-container {
+    position: relative;
+    display: inline-block;
+    z-index: 2;
+}
+.hud-icon-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 70%);
+    z-index: 1;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+.hud-card:hover .hud-icon-glow {
+    opacity: 1;
+}
+.hud-card .service-png-wrapper {
+    background: rgba(255, 255, 255, 0.01) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.hud-card:hover .service-png-wrapper {
+    transform: translateY(-4px) scale(1.05);
+    border-color: rgba(0, 212, 255, 0.3) !important;
+    background: rgba(0, 212, 255, 0.03) !important;
+    box-shadow: 0 8px 24px rgba(0, 212, 255, 0.15);
+}
+.hud-card:hover .service-png-icon {
+    transform: scale(1.1) rotate(2deg) !important;
+    filter: drop-shadow(0 6px 12px rgba(0, 212, 255, 0.3)) !important;
+}
+
+/* Titles and description overrides */
+.hud-title {
+    font-size: 1.2rem !important;
+    margin: 15px 0 10px 0 !important;
+    color: var(--color-white) !important;
+    font-weight: 700;
+    transition: color 0.3s ease;
+    z-index: 2;
+}
+.hud-card:hover .hud-title {
+    color: var(--color-cyan-pulse) !important;
+}
+.hud-desc {
+    color: var(--color-fog) !important;
+    font-size: 0.85rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 20px !important;
+    z-index: 2;
+}
+
+/* Premium Tech Link Button */
+.hud-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-cyan-pulse);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    z-index: 2;
+    margin-top: 10px;
+}
+.hud-cta:hover {
+    color: var(--color-white);
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+}
+.hud-cta:hover svg {
+    transform: translateX(4px);
+    color: var(--color-cyan-pulse);
+}
+
+/* Slider Layout & Progress Toggles */
 .services-slider-container {
     position: relative;
     width: 100%;
@@ -193,10 +364,10 @@ if (!function_exists('getServiceIconHtml')) {
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
     padding: 20px 0;
-    scrollbar-width: none; /* Hide scrollbar Firefox */
+    scrollbar-width: none;
 }
 .services-slider-track::-webkit-scrollbar {
-    display: none; /* Hide scrollbar Chrome/Safari */
+    display: none;
 }
 .slider-card {
     flex: 0 0 calc(33.333% - 20px);
@@ -250,36 +421,67 @@ if (!function_exists('getServiceIconHtml')) {
     width: 20px;
     height: 20px;
 }
-.prev-btn {
-    left: -10px;
+.prev-btn { left: -10px; }
+.next-btn { right: -10px; }
+
+/* Progress Dots Pagination */
+.slider-dots-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
 }
-.next-btn {
-    right: -10px;
+.slider-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.slider-dot.active {
+    width: 24px;
+    border-radius: 4px;
+    background: var(--color-cyan-pulse);
+    border-color: var(--color-cyan-pulse);
+    box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const track = document.querySelector('.services-slider-track');
+    const container = document.querySelector('.services-slider-container');
     const prevBtn = document.querySelector('.prev-btn');
     const nextBtn = document.querySelector('.next-btn');
+    const dots = document.querySelectorAll('.slider-dot');
 
     if (track && prevBtn && nextBtn) {
-        // Scroll amount is width of one card + gap
+        let autoplayInterval;
+        let isPaused = false;
+
         const getScrollAmount = () => {
             const card = track.querySelector('.slider-card');
-            return card ? card.offsetWidth + 30 : 350;
+            return card ? card.offsetWidth + 30 : 350; // card width + gap
         };
 
-        prevBtn.addEventListener('click', () => {
-            track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
-        });
+        const updateDots = () => {
+            const cardWidth = getScrollAmount();
+            // Calculate active index based on scroll position
+            const scrollLeft = track.scrollLeft;
+            const activeIndex = Math.round(scrollLeft / cardWidth);
+            
+            dots.forEach((dot, index) => {
+                if (index === activeIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        };
 
-        nextBtn.addEventListener('click', () => {
-            track.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
-        });
-
-        // Toggle buttons visibility based on scroll position
         const toggleButtons = () => {
             const scrollLeft = track.scrollLeft;
             const maxScroll = track.scrollWidth - track.clientWidth;
@@ -291,10 +493,71 @@ document.addEventListener('DOMContentLoaded', () => {
             nextBtn.style.pointerEvents = scrollLeft >= maxScroll - 5 ? 'none' : 'auto';
         };
 
-        track.addEventListener('scroll', toggleButtons);
-        window.addEventListener('resize', toggleButtons);
-        // Initial check
-        setTimeout(toggleButtons, 500);
+        const slideNext = () => {
+            const maxScroll = track.scrollWidth - track.clientWidth;
+            if (track.scrollLeft >= maxScroll - 10) {
+                // Wrap around to start smoothly
+                track.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                track.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+            }
+        };
+
+        const startAutoplay = () => {
+            stopAutoplay(); // clear existing
+            autoplayInterval = setInterval(() => {
+                if (!isPaused) {
+                    slideNext();
+                }
+            }, 3500);
+        };
+
+        const stopAutoplay = () => {
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval);
+            }
+        };
+
+        // Navigation actions
+        prevBtn.addEventListener('click', () => {
+            track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+        });
+
+        nextBtn.addEventListener('click', slideNext);
+
+        // Dot navigation clicks
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const targetIndex = parseInt(dot.getAttribute('data-slide'));
+                track.scrollTo({
+                    left: targetIndex * getScrollAmount(),
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Hover events to pause/resume autoplay
+        container.addEventListener('mouseenter', () => { isPaused = true; });
+        container.addEventListener('mouseleave', () => { isPaused = false; });
+        container.addEventListener('touchstart', () => { isPaused = true; }, { passive: true });
+
+        // Scroll event updates UI indicators
+        track.addEventListener('scroll', () => {
+            updateDots();
+            toggleButtons();
+        });
+
+        window.addEventListener('resize', () => {
+            updateDots();
+            toggleButtons();
+        });
+
+        // Initialize
+        setTimeout(() => {
+            updateDots();
+            toggleButtons();
+            startAutoplay();
+        }, 500);
     }
 });
 </script>
