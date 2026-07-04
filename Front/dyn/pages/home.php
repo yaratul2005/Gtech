@@ -69,72 +69,62 @@ if (!function_exists('getServiceIconHtml')) {
         <p class="hero-desc" data-reveal data-delay="400">
             A premium technology agency providing elite development, custom applications, branding solutions, and marketing strategies for forward-thinking brands.
         </p>
-        <div class="hero-ctas-container" data-reveal data-delay="600" style="margin-top: 35px; display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;">
-            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; width: 100%; max-width: 680px;">
-                <a href="/services" class="btn btn-secondary hero-explore-btn" style="
-                    height: 54px; 
-                    display: inline-flex; 
-                    align-items: center; 
-                    margin: 0; 
-                    padding: 0 30px; 
-                    border: 1px solid rgba(255,255,255,0.06); 
-                    background: rgba(255,255,255,0.02);
-                    border-radius: 12px;
-                    font-size: 0.95rem;
-                ">Explore Services</a>
+        <div class="hero-ctas-container" data-reveal data-delay="600" style="margin-top: 35px; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%;">
+            <!-- Form centered on top -->
+            <form id="hero-lead-form" action="/contact/submit" method="POST" style="
+                display: flex; 
+                align-items: center; 
+                gap: 10px; 
+                background: rgba(9, 13, 22, 0.45); 
+                border: 1px solid var(--glass-border); 
+                padding: 6px; 
+                border-radius: 14px; 
+                width: 100%;
+                max-width: 480px; 
+                backdrop-filter: blur(15px); 
+                -webkit-backdrop-filter: blur(15px);
+                box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            ">
+                <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
+                <input type="hidden" name="name" value="Quick Hero Lead">
+                <input type="hidden" name="service" value="General Inquiry (Hero)">
+                <input type="hidden" name="message" value="Quick inquiry submitted directly from the homepage hero email form.">
                 
-                <form id="hero-lead-form" action="/contact/submit" method="POST" style="
-                    display: flex; 
-                    align-items: center; 
-                    gap: 10px; 
-                    background: rgba(9, 13, 22, 0.4); 
-                    border: 1px solid var(--glass-border); 
-                    padding: 6px; 
-                    border-radius: 12px; 
+                <input type="email" name="email" placeholder="Enter your email address" required style="
                     flex-grow: 1; 
-                    max-width: 450px; 
-                    backdrop-filter: blur(15px); 
-                    -webkit-backdrop-filter: blur(15px);
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                    background: transparent; 
+                    border: none; 
+                    outline: none; 
+                    padding: 10px 15px; 
+                    color: var(--color-white); 
+                    font-size: 0.9rem;
                 ">
-                    <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
-                    <input type="hidden" name="name" value="Quick Hero Lead">
-                    <input type="hidden" name="service" value="General Inquiry (Hero)">
-                    <input type="hidden" name="message" value="Quick inquiry submitted directly from the homepage hero email form.">
-                    
-                    <input type="email" name="email" placeholder="Enter your email address" required style="
-                        flex-grow: 1; 
-                        background: transparent; 
-                        border: none; 
-                        outline: none; 
-                        padding: 10px 15px; 
-                        color: var(--color-white); 
-                        font-size: 0.9rem;
-                    ">
-                    
-                    <button type="submit" class="btn btn-primary" id="hero-submit-btn" style="
-                        height: 42px; 
-                        padding: 0 22px; 
-                        font-size: 0.88rem; 
-                        display: inline-flex; 
-                        align-items: center; 
-                        margin: 0; 
-                        white-space: nowrap;
-                        background: linear-gradient(135deg, var(--color-blue-core) 0%, var(--color-blue-glow) 100%);
-                        border-radius: 8px;
-                        box-shadow: var(--glow-blue);
-                        font-weight: 600;
-                    ">Enquire a Service</button>
-                </form>
-            </div>
+                
+                <button type="submit" class="btn-hero-submit" id="hero-submit-btn">Enquire a Service</button>
+            </form>
+            
             <div id="hero-lead-message" style="
                 font-size: 0.85rem; 
                 font-family: monospace; 
-                margin-top: 5px; 
+                margin-top: -5px; 
                 display: none; 
                 transition: all 0.3s ease;
             "></div>
+
+            <!-- Explore Services button below the form -->
+            <a href="/services" class="btn btn-secondary hero-explore-btn" style="
+                height: 48px; 
+                display: inline-flex; 
+                align-items: center; 
+                margin: 0; 
+                padding: 0 28px; 
+                border: 1px solid rgba(255,255,255,0.06); 
+                background: rgba(255,255,255,0.02);
+                border-radius: 10px;
+                font-size: 0.9rem;
+                transition: all 0.3s ease;
+            ">Explore Services</a>
         </div>
     </div>
 </section>
@@ -516,6 +506,36 @@ if (!function_exists('getServiceIconHtml')) {
 #hero-lead-form:focus-within {
     border-color: rgba(0, 212, 255, 0.4) !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 212, 255, 0.15) !important;
+}
+.btn-hero-submit {
+    background: #ffffff !important;
+    color: #090d16 !important;
+    border: none !important;
+    height: 42px;
+    padding: 0 22px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+.btn-hero-submit:hover {
+    background: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.35) !important;
+}
+.btn-hero-submit:disabled {
+    background: rgba(255, 255, 255, 0.4) !important;
+    color: rgba(9, 13, 22, 0.6) !important;
+    cursor: not-allowed;
+}
+.hero-explore-btn:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(0, 212, 255, 0.25) !important;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.05);
 }
 @media (max-width: 580px) {
     .hero-explore-btn {
